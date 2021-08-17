@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Dashboard | Compfilex </title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archivo&amp;display=swap">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
+</head>
+
+<body class="text-start" id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid">
+                        <nav class="navbar navbar-light navbar-expand-md">
+                            <div class="container-fluid"><a class="navbar-brand text-capitalize text-start" href="#" style="font-family: Archivo, sans-serif;font-size: 25px;font-weight: bold;transform: rotate(-12deg) scale(1.19);color: var(--bs-teal);">Compfilex</a><a class="navbar-brand text-lowercase text-start" href="#" style="font-family: Nunito, sans-serif;font-size: 14px;transform: rotate(0deg) scale(1);color: var(--bs-dark);">a better way to make composite</a></div>
+                        </nav>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400" style="font-size: 23px;"></i><span class="font-monospace text-lowercase d-none d-lg-inline me-2 text-gray-600 small" style="font-weight: bold;">valerie_luna</span></a>
+                                <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
+                                    <a class="dropdown-item" href="saved-settings.html"><i class="fas fa-th fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Saved Settings</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Activity logs</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-info-circle fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;About</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Change Password</a>
+                                    <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="container-fluid" style="padding: 25px;color: var(--bs-gray-dark);">
+                    <div class="row row-cols-3 row-cols-sm-3 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3" style="margin-top: 0;margin-right: 0px;margin-left: 0px;">
+                        <div class="col-4 col-sm-5 col-md-7 col-lg-9 col-xl-9 col-xxl-10 align-self-center" style="padding: 0px;">
+                            <h2 class="font-monospace text-start text-dark mb-0">Control Panel</h2>
+                        </div>
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 align-self-center m-auto" style="padding-left: 0px;padding-right: 0px;"><a class="btn btn-success btn-icon-split" role="button" style="width: 100px;padding: 0px;padding-top: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;margin-left: 5px;"><span class="text-white-50 icon"><i class="fas fa-check"></i></span><span class="text-white text">Start</span></a></div>
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 offset-xxl-0 align-self-center me-auto" style="padding: 0px;"><a class="btn btn-danger btn-icon-split" role="button" style="width: 100px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;margin-left: 5px;"><span class="text-white-50 icon"><i class="fas fa-exclamation-triangle"></i></span><span class="text-white text">Stop</span></a></div>
+                    </div>
+                    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2" style="padding: 15px;">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-5 d-table order-first">
+                            <div class="card shadow mb-4" style="margin-bottom: 0px;">
+                                <div class="card-header py-3">
+                                    <div class="row row-cols-2 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 d-flex">
+                                        <div class="col-8 m-auto">
+                                            <h6 class="text-start text-primary m-0 fw-bold">Current Settings</h6>
+                                        </div>
+                                        <div class="col-3 offset-xxl-1 text-end"><a class="btn btn-warning text-start btn-icon-split" role="button" style="width: 35px;height: 35px;padding: 0px;"><i class="fas fa-save" style="text-align: center;width: 20px;height: 20px;margin: 7.5px;"></i></a></div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Scaling Ratio</td>
+                                                        <td>2:3</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Filament Diameter (mm)</td>
+                                                        <td>1.25</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Filament Length (cm)</td>
+                                                        <td>50</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Scaling Motor Speed 1 (m/s)</td>
+                                                        <td>20</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Scaling Motor Speed 2 (m/s)</td>
+                                                        <td>30</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Scaling Motors Duration (min)</td>
+                                                        <td>5:45</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mixer Motor Speed (m/s)</td>
+                                                        <td>50</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mixer Motor Duration (min)</td>
+                                                        <td>10:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mixer Temperature (*C)</td>
+                                                        <td>240</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Extruder Motor Speed (m/s)</td>
+                                                        <td>35</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Extruder Motor Duration (min)</td>
+                                                        <td>25:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Extruder Temperature (*C)</td>
+                                                        <td>25:00</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col" style="padding-bottom: 16px;">
+                                    <div class="card shadow border-start-info py-2">
+                                        <div class="card-body">
+                                            <div class="row align-items-center no-gutters">
+                                                <div class="col me-2">
+                                                    <div class="text-uppercase text-info fw-bold text-xs mb-1"><span>Progress</span></div>
+                                                    <div class="row g-0 align-items-center">
+                                                        <div class="col-auto">
+                                                            <div class="text-dark fw-bold h5 mb-0 me-3"><span>80%</span></div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="progress progress-sm">
+                                                                <div class="progress-bar bg-info" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"><span class="visually-hidden">80%</span></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <div class="card shadow d-flex flex-grow-1 flex-shrink-1 flex-fill mb-4">
+                                        <div class="card-header py-3">
+                                            <h6 class="text-primary m-0 fw-bold">Change Settings</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row row-cols-2">
+                                                <div class="col-7 col-sm-5 col-md-4 col-lg-5 col-xl-5 col-xxl-5 align-self-center"><select class="shadow-none form-select-sm flex-fill" name="Choose an property" required="">
+                                                        <optgroup label="Scaling System">
+                                                            <option value="scalingMotorSpeed1">Motor Speed 1</option>
+                                                            <option value="scalingMotorSpeed2">Motor Speed 2</option>
+                                                            <option value="scalingMotorsDuration">Motors Duration</option>
+                                                        </optgroup>
+                                                        <optgroup label="Mixer System">
+                                                            <option value="mixerMotorSpeed">Motor Speed</option>
+                                                            <option value="mixerMotorDuration">Motor Duration</option>
+                                                            <option value="mixerTemperature">Temperature</option>
+                                                        </optgroup>
+                                                        <optgroup label="Extruder System">
+                                                            <option value="extruderMotorSpeed">Motor Speed</option>
+                                                            <option value="extruderMotorDuration">Motor Duration</option>
+                                                            <option value="extruderTemperature">Temperature</option>
+                                                        </optgroup>
+                                                        <optgroup label="General">
+                                                            <option value="scalingRatio">Scaling Ratio</option>
+                                                            <option value="filamentDiameter">Filament Diameter</option>
+                                                            <option value="filamentLength">Filament Length</option>
+                                                        </optgroup>
+                                                    </select></div>
+                                                <div class="col-5 col-sm-4 col-md-5 col-lg-4 col-xl-4 col-xxl-4 align-self-center m-auto">
+                                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"><input type="text" id="FormInput" class="mdl-textfield__input" style="border-radius: 0px;border-bottom-color: rgba(0,0,0,0.5);"><label class="form-label text-start mdl-textfield__label" for="changedValue" style="color: rgba(0,0,0,0.5);"></label></div>
+                                                </div>
+                                                <div class="col-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 align-self-center m-auto"><button class="btn btn-primary" type="button">Change</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-7 mx-auto">
+                            <div class="row row-cols-2 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12 col-xxl-6 mx-auto">
+                                    <div class="card shadow d-flex flex-grow-1 flex-shrink-1 flex-fill mb-4">
+                                        <div class="card-header py-3">
+                                            <h6 class="text-primary m-0 fw-bold">Active Motor Speeds</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-4 text-start">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Scaler 1 (m/s)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>21</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 text-start">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Scaler 2 (m/s)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>30</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Mixer (m/s)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>50</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-4 text-start">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Extruder (m/s)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>35</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 text-start">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="color: var(--bs-gray-dark);"><span style="color: var(--bs-gray-dark);">Puller (m/s)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>7</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Collector (m/s)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>13</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12 col-xxl-6 mx-auto">
+                                    <div class="card shadow flex-grow-1 flex-shrink-1 flex-fill justify-content-md-center mb-4">
+                                        <div class="card-header py-3">
+                                            <h6 class="text-primary m-0 fw-bold">Active Temperatures</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col text-start">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">mıxer 1 (*C)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>242</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">mıxer 2 (*C)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>235</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col text-start">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">ExtRuder 1 (*C)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>283</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Extruder 2 (*C)</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span>279</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3">
+                                            <h6 class="text-primary m-0 fw-bold">Filament Output</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-5 col-xxl-6">
+                                                    <div class="row" style="padding-bottom: 5px;">
+                                                        <div class="col-12">
+                                                            <div class="card shadow border-start-primary py-2">
+                                                                <div class="card-body">
+                                                                    <div class="row align-items-center no-gutters">
+                                                                        <div class="col me-2">
+                                                                            <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="color: var(--bs-green);"><span style="color: var(--bs-indigo);">Total turn (360 deg)</span></div>
+                                                                            <div class="text-dark fw-bold h5 mb-0"><span>78</span></div>
+                                                                        </div>
+                                                                        <div class="col-auto"><i class="fas fa-circle-notch fa-2x text-gray-300"></i></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col" style="padding-bottom: 5px;">
+                                                            <div class="card shadow border-start-primary py-2">
+                                                                <div class="card shadow border-start-warning py-2">
+                                                                    <div class="card-body">
+                                                                        <div class="row align-items-center no-gutters">
+                                                                            <div class="col me-2">
+                                                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>ESTIMATED Total Length (cm)</span></div>
+                                                                                <div class="text-dark fw-bold h5 mb-0"><span>41</span></div>
+                                                                            </div>
+                                                                            <div class="col-auto"><i class="fas fa-ruler fa-2x text-gray-300"></i></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col" style="padding-bottom: 5px;">
+                                                            <div class="card shadow border-start-primary py-2">
+                                                                <div class="card-body">
+                                                                    <div class="row align-items-center no-gutters">
+                                                                        <div class="col me-2">
+                                                                            <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-red);">Average Dıameter (mm)</span></div>
+                                                                            <div class="text-dark fw-bold h5 mb-0"><span>1.28</span></div>
+                                                                        </div>
+                                                                        <div class="col-auto"><i class="fas fa-window-minimize fa-2x text-gray-300"></i></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-sm-12 col-md-12 col-lg-12 col-xl-7 col-xxl-6 d-none d-print-none d-sm-block d-md-block d-lg-block d-xl-block d-xxl-block m-auto" style="padding-top: 10px;">
+                                                    <div class="chart-area"><canvas data-bss-chart="{&quot;type&quot;:&quot;line&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;,&quot;8&quot;,&quot;9&quot;,&quot;10&quot;,&quot;11&quot;,&quot;12&quot;,&quot;13&quot;,&quot;14&quot;,&quot;15&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Diameter&quot;,&quot;fill&quot;:false,&quot;data&quot;:[&quot;0.50&quot;,&quot;.60&quot;,&quot;0.66&quot;,&quot;0.75&quot;,&quot;.90&quot;,&quot;1.00&quot;,&quot;1.13&quot;,&quot;1.08&quot;,&quot;1.12&quot;,&quot;1.09&quot;,&quot;1.098&quot;,&quot;1.00&quot;,&quot;1.1&quot;,&quot;1.12&quot;],&quot;backgroundColor&quot;:&quot;rgba(78, 115, 223, 0.05)&quot;,&quot;borderColor&quot;:&quot;rgb(129,64,64)&quot;},{&quot;label&quot;:&quot;&quot;,&quot;fill&quot;:true,&quot;data&quot;:[]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:false,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;,&quot;fontColor&quot;:&quot;#666&quot;},&quot;position&quot;:&quot;bottom&quot;,&quot;reverse&quot;:false},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;,&quot;display&quot;:false,&quot;text&quot;:&quot;Diameter vs Time&quot;},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:false},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;beginAtZero&quot;:false,&quot;padding&quot;:20}}],&quot;yAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:true},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;beginAtZero&quot;:false,&quot;padding&quot;:20}}]}}}"></canvas></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2" style="padding-bottom: 15px;">
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 text-end"><a class="btn btn-dark btn-circle ms-1" role="button"><i class="fas fa-info-circle text-white"></i></a></div>
+                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 text-start"><a class="btn btn-dark btn-circle ms-1" role="button"><i class="fab fa-github text-white"></i></a></div>
+                </div>
+                <div class="text-center my-auto copyright">
+                    <div class="row">
+                        <div class="col" style="padding-bottom: 5px;"><span>Copyright © TUBITAK 2209-A Composite Filament Extruder 2021</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><span>Designed by Gökhan Koçmarlı via Bootstrap Studio</span></div>
+                    </div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+</body>
+
+</html>

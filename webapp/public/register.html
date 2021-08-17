@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title> Register | Compfilex </title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archivo&amp;display=swap">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
+    
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="card shadow-lg o-hidden border-0 my-5">
+            <div class="card-body p-0">
+                <div class="row">
+                    <div class="col-lg-5 d-none d-lg-flex">
+                        <div class="flex-grow-1 bg-register-image" style="background: url(&quot;assets/img/new-data-services-CoymjeSkavc-unsplash.jpg&quot;) top / cover no-repeat;"></div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h4 class="text-dark mb-4">Create an Account</h4>
+                                <p id="regInfoText"></p>
+                            </div>
+                            <form class="user" id="registerForm">
+                                <div class="row mb-3">
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="FirstNameInput" placeholder="First Name" name="firstName" required=""></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="LastNameInput" placeholder="Last Name" name="lastName" required=""></div>
+                                </div>
+                                <div class="mb-3"><input class="form-control form-control-user" type="email" id="emailInput" aria-describedby="emailHelp" placeholder="Email Address" name="email" required=""></div>
+                                <div class="mb-3"><input class="form-control form-control-user" type="username" id="userNameInput" placeholder="Username" name="userName" required=""></div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-12 mb-12 mb-sm-0"><input class="form-control form-control-user" type="password" id="passwordInput" placeholder="Password" name="password" required=""></div>
+                                </div><button class="btn btn-primary d-block btn-user w-100" type="submit" id="registerButton">Let me make some filament!</button>
+                                <hr>
+                            </form>
+                            <div class="text-center"></div>
+                            <div class="text-center"><a class="small" href="/login">Already have an account? Login!</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 col-xxl-10">
+            <div class="card shadow-lg o-hidden border-0 my-5">
+                <div class="card-body p-0">
+                    <div class="row">
+                        <div class="col-12 col-lg-12">
+                            <div class="p-5">
+                                <div class="text-center"><a class="navbar-brand text-capitalize text-start" href="#" style="font-family: Archivo, sans-serif;font-size: 25px;font-weight: bold;transform: rotate(-12deg) scale(1.19);color: var(--bs-teal);">Compfilex</a><a class="navbar-brand text-lowercase text-start" href="#" style="font-family: Nunito, sans-serif;font-size: 14px;transform: rotate(0deg) scale(1);color: var(--bs-dark);">a better way to make composite</a></div>
+                                <hr>
+                                <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2" style="padding-bottom: 15px;">
+                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 text-end"><a class="btn btn-dark btn-circle ms-1" role="button"><i class="fas fa-info-circle text-white"></i></a></div>
+                                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 text-start"><a class="btn btn-dark btn-circle ms-1" role="button"><i class="fab fa-github text-white"></i></a></div>
+                                </div>
+                                <div class="text-center my-auto copyright">
+                                    <div class="row">
+                                        <div class="col" style="padding-bottom: 5px;"><span>Copyright © TUBITAK 2209-A Composite Filament Extruder 2021</span></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col"><span>Designed by Gökhan Koçmarlı via Bootstrap Studio</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        registerForm.onsubmit = async (e) => {
+            e.preventDefault();
+            var form = document.querySelector("#registerForm");
+    
+            data = {
+                firstName: form.querySelector("input[name=firstName]").value,
+                lastName: form.querySelector("input[name=lastName]").value,
+                userName: form.querySelector('input[name="userName"]').value,
+                passwordHash: form.querySelector('input[name="password"]').value,
+                email: form.querySelector('input[name="email"]').value
+            }
+    
+            let response = await fetch('/user?type=register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+            })
+    
+            let res = await response.json()
+            if (res["status"] == "OK") {
+                document.querySelector("#regInfoText").innerHTML = "Registration succefully completed. Redirecting you to login page.";
+                document.querySelector("#registerForm").querySelector('input[name="userName"]').value = ""
+                document.querySelector("#registerForm").querySelector('input[name="password"]').value = ""
+                document.querySelector("#registerForm").querySelector('input[name="email"]').value = ""
+                setTimeout(window.location.replace("/login"), 1500)
+            } else {
+                document.querySelector("#regInfoText").innerHTML = "Something bad happend! Please contact service provider.";
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+</body>
+
+</html>
