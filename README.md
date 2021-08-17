@@ -26,7 +26,5 @@ will be edited!
 All the model we have been designed is added to repository. However, it is not made from measurements -so, not for production. We're trying to make a machine from daily-life products, hang in there, it will come. Check SketchUp file for more detail perspective.
 
 ![Model Unmeasured Design 1](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/machine-model-1.png)
-![Model Unmeasured Design 2](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/machine-model-2.png)
-![Model Unmeasured Design 3](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/machine-model-3.png)
 
 Also, basic scheme of electrical connections are given.
