@@ -15,7 +15,7 @@ This project aims to build a machine to make composite filament within given rat
 
 ## Web Application
 
-![Web App Working Demo](https://github.com/electricalgorithm/compfilex/main/assets/webapp_1.gif)
+![Web App Working Demo](https://github.com/electricalgorithm/compfilex/raw/main/assets/webapp_1.gif)
 
 ## Microcontroller
 
