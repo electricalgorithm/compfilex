@@ -23,4 +23,6 @@ will be edited!
 
 ## Machine
 
-will be edited!
+All the model we have been designed is added to repository. However, it is not made from measurements -so, not for production. We're trying to make a machine from daily-life products, hang in there, it will come. Check SketchUp file for more detail perspective.
+
+Also, basic scheme of electrical connections are given. 
