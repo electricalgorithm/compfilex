@@ -1,5 +1,7 @@
 const express = require("express")
 const path = require("path")
+const ejs = require("ejs")
+const config = require("../config.env")
 router = express.Router()
 
 
@@ -24,21 +26,50 @@ const isAuth = (req, res, next) => {
 
 // Sample get routes for HTML pages.
 router.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/index.html"))
+    res.redirect("/dashboard");
 })
 
 router.get("/register", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/register.html"))
+    res.render("register", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "Register",
+        current_year: (new Date).getFullYear(),
+        req_auth: req.session.isAuth
+    })
 })
 
 router.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/login.html"))
+    res.render("login", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "Login",
+        current_year: (new Date).getFullYear(),
+        req_auth: req.session.isAuth
+    })
 })
 
 // Dashboard page is restricted from non-registered users.
 // That's why we got isAuth function in the parameter list. 
 router.get("/dashboard", isAuth, (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/dashboard.html"))
+    res.render("dashboard", {
+        page_name: "Dashboard",
+        user_name: req.session.username,
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        current_year: (new Date).getFullYear()
+    })
+})
+
+router.get("/saved-settings", isAuth, (req, res) => {
+    res.render("saved-settings", {
+        page_name: "Saved Settings",
+        user_name: req.session.username,
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        current_year: (new Date).getFullYear(),
+        req_auth: req.session.isAuth
+    })
 })
 
 module.exports = router

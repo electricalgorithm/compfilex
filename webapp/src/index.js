@@ -4,9 +4,12 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors")
 const config = require("./config.env.js")
+const ejs = require("ejs")
 const MongoDBSession = require("connect-mongodb-session")(session);
 
 const app = express();
+app.set("view engine", "ejs")
+app.set('views', path.join(__dirname, './views'))
 const PORT = config.PORT || 3000;
 
 const store = new MongoDBSession({
@@ -55,7 +58,15 @@ app.use(express.static("public"));
 
 // Showing 404 message if couldn't found the page.
 app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, "../public/404.html"))
+    res.status(404).render("404", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "Page Not Found",
+        page_url: req.originalUrl,
+        req_auth: req.session.isAuth,
+        user_name: req.session.user_name,
+        current_year: (new Date).getFullYear()
+    })
 });
 
 app.listen(PORT, () => console.info(`Server has started on ${PORT}`));

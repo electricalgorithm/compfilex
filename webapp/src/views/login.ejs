@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Log in | Compfilex </title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archivo&amp;display=swap">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
-    <link rel="stylesheet" href="assets/css/styles.min.css">
-</head>
+<%- include("./partials/head.ejs") %>
 
 <body class="bg-gradient-primary">
     <div class="container">
@@ -42,34 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-md-9 col-lg-12 col-xl-10">
-                <div class="card shadow-lg o-hidden border-0 my-5">
-                    <div class="card-body p-0">
-                        <div class="row">
-                            <div class="col-12 col-lg-12">
-                                <div class="p-5">
-                                    <div class="text-center"><a class="navbar-brand text-capitalize text-start" href="#" style="font-family: Archivo, sans-serif;font-size: 25px;font-weight: bold;transform: rotate(-12deg) scale(1.19);color: var(--bs-teal);">Compfilex</a><a class="navbar-brand text-lowercase text-start" href="#" style="font-family: Nunito, sans-serif;font-size: 14px;transform: rotate(0deg) scale(1);color: var(--bs-dark);">a better way to make composite</a></div>
-                                    <hr>
-                                    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2" style="padding-bottom: 15px;">
-                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 text-end"><a class="btn btn-dark btn-circle ms-1" role="button"><i class="fas fa-info-circle text-white"></i></a></div>
-                                        <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 text-start"><a class="btn btn-dark btn-circle ms-1" role="button"><i class="fab fa-github text-white"></i></a></div>
-                                    </div>
-                                    <div class="text-center my-auto copyright">
-                                        <div class="row">
-                                            <div class="col" style="padding-bottom: 5px;"><span>Copyright © TUBITAK 2209-A Composite Filament Extruder 2021</span></div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col"><span>Designed by Gökhan Koçmarlı via Bootstrap Studio</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <%- include("./partials/footer_2.ejs") %>
     </div>
     <script>
         loginForm.onsubmit = async (e) => {

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<%- include("./partials/head.ejs") %>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <% if (req_auth == true) { %>
+                    <%- include("./partials/nav.loggedin.ejs") %>
+                <% } else { %> 
+                    <%- include("./partials/nav.notlogged.ejs") %>
+                <% } %>
+                
+                <div class="container-fluid">
+                    <div class="text-center mt-5">
+                        <div class="error mx-auto" data-text="404">
+                            <p class="m-0">404</p>
+                        </div>
+                        <p class="text-dark mb-5 lead">There is no page at <%=page_url%></p>
+                        <p class="text-black-50 mb-0">It looks like you found some bubbles in your filament...</p>
+                        <% if (req_auth == true) { %>
+                            <a href="/">← Back to Control Panel</a>
+                        <% } else { %> 
+                            <a href="/">← Back to Login</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <%- include("./partials/footer_1.ejs") %>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+</body>
+
+</html>
