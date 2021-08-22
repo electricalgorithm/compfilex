@@ -13,23 +13,50 @@
 
                 <div class="container-fluid" style="padding: 25px;color: var(--bs-gray-dark);">
                     <div class="row row-cols-3 row-cols-sm-3 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3" style="margin-top: 0;margin-right: 0px;margin-left: 0px;">
+                        
+                        <!-- CONTROL PANEL TEXT -->
                         <div class="col-4 col-sm-5 col-md-7 col-lg-9 col-xl-9 col-xxl-10 align-self-center" style="padding: 0px;">
                             <h2 class="font-monospace text-start text-dark mb-0">Control Panel</h2>
                         </div>
-                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 align-self-center m-auto" style="padding-left: 0px;padding-right: 0px;"><a class="btn btn-success btn-icon-split" role="button" style="width: 100px;padding: 0px;padding-top: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;margin-left: 5px;"><span class="text-white-50 icon"><i class="fas fa-check"></i></span><span class="text-white text">Start</span></a></div>
-                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 offset-xxl-0 align-self-center me-auto" style="padding: 0px;"><a class="btn btn-danger btn-icon-split" role="button" style="width: 100px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;margin-left: 5px;"><span class="text-white-50 icon"><i class="fas fa-exclamation-triangle"></i></span><span class="text-white text">Stop</span></a></div>
+
+                        <!-- START BUTTON -->
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 align-self-center m-auto" style="padding-left: 0px;padding-right: 0px;">
+                            <a class="btn btn-success btn-icon-split" role="button" style="width: 100px;padding: 0px;padding-top: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;margin-left: 5px;">
+                                <span class="text-white-50 icon"><i class="fas fa-check"></i></span>
+                                <span class="text-white text">Start</span>
+                            </a>
+                        </div>
+
+                        <!-- STOP BUTTON -->
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 offset-xxl-0 align-self-center me-auto" style="padding: 0px;">
+                            <a class="btn btn-danger btn-icon-split" role="button" style="width: 100px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;margin-left: 5px;">
+                                <span class="text-white-50 icon"><i class="fas fa-exclamation-triangle"></i>
+                                </span><span class="text-white text">Stop</span>
+                            </a>
+                        </div>
                     </div>
+
+
                     <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2" style="padding: 15px;">
                         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-5 d-table order-first">
                             <div class="card shadow mb-4" style="margin-bottom: 0px;">
                                 <div class="card-header py-3">
                                     <div class="row row-cols-2 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 d-flex">
+                                        
+                                        <!-- CURRENT SETTINGS TEXT -->
                                         <div class="col-8 m-auto">
                                             <h6 class="text-start text-primary m-0 fw-bold">Current Settings</h6>
                                         </div>
-                                        <div class="col-3 offset-xxl-1 text-end"><a class="btn btn-warning text-start btn-icon-split" role="button" style="width: 35px;height: 35px;padding: 0px;"><i class="fas fa-save" style="text-align: center;width: 20px;height: 20px;margin: 7.5px;"></i></a></div>
+                                        
+                                        <!-- SAVE SETTINGS BUTTON -->
+                                        <div class="col-3 offset-xxl-1 text-end">
+                                            <a class="btn btn-warning text-start btn-icon-split" role="button" style="width: 35px;height: 35px;padding: 0px;">
+                                                <i class="fas fa-save" style="text-align: center;width: 20px;height: 20px;margin: 7.5px;"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
+                                
                                 <div class="card-body">
                                     <div>
                                         <div class="table-responsive">
@@ -37,51 +64,51 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>Scaling Ratio</td>
-                                                        <td>2:3</td>
+                                                        <td id="scalingRatioText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Filament Diameter (mm)</td>
-                                                        <td>1.25</td>
+                                                        <td id="filamentDiameterText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Filament Length (cm)</td>
-                                                        <td>50</td>
+                                                        <td id="filamentLengthText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Scaling Motor Speed 1 (m/s)</td>
-                                                        <td>20</td>
+                                                        <td id="scalingMotor1SpeedText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Scaling Motor Speed 2 (m/s)</td>
-                                                        <td>30</td>
+                                                        <td id="scalingMotor2SpeedText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Scaling Motors Duration (min)</td>
-                                                        <td>5:45</td>
+                                                        <td id="scalingMotorDurationText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mixer Motor Speed (m/s)</td>
-                                                        <td>50</td>
+                                                        <td id="mixerMotorSpeedText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mixer Motor Duration (min)</td>
-                                                        <td>10:00</td>
+                                                        <td id="mixerMotorDurationText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mixer Temperature (*C)</td>
-                                                        <td>240</td>
+                                                        <td id="mixerTemperatureText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Extruder Motor Speed (m/s)</td>
-                                                        <td>35</td>
+                                                        <td id="extruderMotorSpeedText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Extruder Motor Duration (min)</td>
-                                                        <td>25:00</td>
+                                                        <td id="extruderMotorDurationText"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Extruder Temperature (*C)</td>
-                                                        <td>25:00</td>
+                                                        <td id="extruderTemperatureText"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -120,20 +147,21 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="row row-cols-2">
-                                                <div class="col-7 col-sm-5 col-md-4 col-lg-5 col-xl-5 col-xxl-5 align-self-center"><select class="shadow-none form-select-sm flex-fill" name="Choose an property" required="">
+                                                <div class="col-7 col-sm-5 col-md-4 col-lg-5 col-xl-5 col-xxl-5 align-self-center">
+                                                    <select id="changeSettingSelect" class="shadow-none form-select-sm flex-fill" name="Choose an property" required="">
                                                         <optgroup label="Scaling System">
-                                                            <option value="scalingMotorSpeed1">Motor Speed 1</option>
-                                                            <option value="scalingMotorSpeed2">Motor Speed 2</option>
-                                                            <option value="scalingMotorsDuration">Motors Duration</option>
+                                                            <option value="scalarMotor1Speed">Motor Speed 1</option>
+                                                            <option value="scalarMotor2Speed">Motor Speed 2</option>
+                                                            <option value="scalarRunDuration">Motors Duration</option>
                                                         </optgroup>
                                                         <optgroup label="Mixer System">
-                                                            <option value="mixerMotorSpeed">Motor Speed</option>
-                                                            <option value="mixerMotorDuration">Motor Duration</option>
+                                                            <option value="mixerMotor1Speed">Motor Speed</option>
+                                                            <option value="mixerRunDuration">Motor Duration</option>
                                                             <option value="mixerTemperature">Temperature</option>
                                                         </optgroup>
                                                         <optgroup label="Extruder System">
                                                             <option value="extruderMotorSpeed">Motor Speed</option>
-                                                            <option value="extruderMotorDuration">Motor Duration</option>
+                                                            <option value="extruderRunDuration">Motor Duration</option>
                                                             <option value="extruderTemperature">Temperature</option>
                                                         </optgroup>
                                                         <optgroup label="General">
@@ -141,11 +169,17 @@
                                                             <option value="filamentDiameter">Filament Diameter</option>
                                                             <option value="filamentLength">Filament Length</option>
                                                         </optgroup>
-                                                    </select></div>
-                                                <div class="col-5 col-sm-4 col-md-5 col-lg-4 col-xl-4 col-xxl-4 align-self-center m-auto">
-                                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"><input type="text" id="FormInput" class="mdl-textfield__input" style="border-radius: 0px;border-bottom-color: rgba(0,0,0,0.5);"><label class="form-label text-start mdl-textfield__label" for="changedValue" style="color: rgba(0,0,0,0.5);"></label></div>
+                                                    </select>
                                                 </div>
-                                                <div class="col-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 align-self-center m-auto"><button class="btn btn-primary" type="button">Change</button></div>
+                                                <div class="col-5 col-sm-4 col-md-5 col-lg-4 col-xl-4 col-xxl-4 align-self-center m-auto">
+                                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                        <input type="text" id="changeSettingValueInput" class="mdl-textfield__input" style="border-radius: 0px;border-bottom-color: rgba(0,0,0,0.5);">
+                                                        <label class="form-label text-start mdl-textfield__label" for="changedValue" style="color: rgba(0,0,0,0.5);"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 align-self-center m-auto">
+                                                    <button class="btn btn-primary" type="button" onclick="changeSetting()">Change</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -316,6 +350,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
     <script src="assets/js/script.min.js"></script>
+    <%- include("./partials/socket.ejs") %>
 </body>
 
 </html>

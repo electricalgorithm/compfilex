@@ -2,12 +2,24 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const cors = require("cors")
-const config = require("./config.env.js")
-const ejs = require("ejs")
+const cors = require("cors");
+const config = require("./config.env.js");
+const ejs = require("ejs");
 const MongoDBSession = require("connect-mongodb-session")(session);
+const mongoose = require("mongoose");
+const socketHandler = require("./socketHandler");
 
+// Creating app and Socket
 const app = express();
+const httpServer = require("http").Server(app)
+const io = require("socket.io")(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+// Application Settings
 app.set("view engine", "ejs")
 app.set('views', path.join(__dirname, './views'))
 const PORT = config.PORT || 3000;
@@ -17,29 +29,37 @@ const store = new MongoDBSession({
     collection: config.DB_SESSIONS_COLLECTION
 });
 
+
 // Middlewares
 app.use(cors({
     origin: "*"
 }))
 app.use(bodyParser.json());
 app.use((req, res, next) => {
-    console.log(`${new Date().toString()} -> ${req.originalUrl}`);
+    console.log(`${new Date().toString()} -> ${req.method} ${req.originalUrl}`);
     next();
 })
-app.use(session({
+
+var sessionMiddleware = session({
     secret: "QhGVD3UFL2f3YfSSyQcIpcwAOoRTuzIU",
     resave: false,
     saveUninitialized: false,
     store: store,
     unset: "destroy"
-}))
+})
 
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res, next);
+});
+
+app.use(sessionMiddleware)
+
+// Routes
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/login");
 })
 
-// Routes
 let appRoutes = require("./routes/appRoutes");
 let tempRoute = require("./routes/temperature");
 let motorRoute = require("./routes/motor");
@@ -69,4 +89,9 @@ app.use((req, res, next) => {
     })
 });
 
-app.listen(PORT, () => console.info(`Server has started on ${PORT}`));
+// Socket.io Connection Handling
+// Rooms will be used to make calls to all the same users which has different socket IDs.
+// Every username will be a room.
+io.on("connection", socket => socketHandler(socket, io))
+
+httpServer.listen(PORT, () => console.info(`Server has started on ${PORT}`));

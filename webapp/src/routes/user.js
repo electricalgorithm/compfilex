@@ -27,11 +27,40 @@ router.post("/user", async (req, res) => {
                 return res.status(500).send("Request body does not contain firstName, lastName, userName, passwordHash, or email.")
         }
         
-        // Create a new object, assign current date to lastAccessTime and dataCreated.
+        // Create a new object, assign neccecary fields.
         let postedData = req.body
         postedData.dataCreated = new Date().toString()
         postedData.lastAccessTime = new Date().toString()
-        
+        postedData.currentSetting = {
+            scalingRatio: "None",
+            filamentDiameter: 0,
+            filamentLength: 0,
+            scalarMotor1Speed: 0,
+            scalarMotor2Speed: 0,
+            scalarRunDuration: "00:00",
+            mixerMotor1Speed: 0,
+            mixerTemperature: 0,
+            mixerRunDuration: "00:00",
+            extruderMotorSpeed: 0,
+            extruderRunDuration: "00:00",
+            extruderTemperature: 0,
+            collectorMotor1Speed: 0
+        }
+        postedData.activeData = {
+            mixerTemperature1: 0,
+            mixerTemperature2: 0,
+            mixerHeater: false,
+            extruderTemperature1: 0,
+            extruderTemperature2: 0,
+            extruderHeater1: false,
+            extruderHeater2: false,
+            radiusMeterActive1: 0,
+            radiusMeterActive2: 0,
+            pullerMotor1Speed: 0,
+            pullerCycleCount: 0,
+            collectorCycleCount: 0
+        }
+
         // Hash the password and save it to object.
         postedData.passwordHash = crypto.createHmac("sha256", sKey).update(postedData.passwordHash).digest("hex")
 
