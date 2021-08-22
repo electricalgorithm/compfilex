@@ -1,7 +1,7 @@
 <table class="table my-0" id="dataTable">
     <thead>
         <tr>
-            <th>Name</th>
+            <th>#</th>
             <th>Scaling Ratio</th>
             <th>Filament Diameter</th>
             <th>Filament Length</th>
@@ -17,50 +17,32 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>TE_F1</td>
-            <td>1:3.2</td>
-            <td>1.25</td>
-            <td>500</td>
-            <td>5</td>
-            <td>16</td>
-            <td>5:00</td>
-            <td>20</td>
-            <td>10:00</td>
-            <td>280</td>
-            <td>20</td>
-            <td>15:00</td>
-            <td>245</td>
-        </tr>
-        <tr>
-            <td>TE_F2</td>
-            <td>2:3</td>
-            <td>1.25</td>
-            <td>1000</td>
-            <td>10</td>
-            <td>15</td>
-            <td>1:00</td>
-            <td>35</td>
-            <td>20:00</td>
-            <td>350</td>
-            <td>20</td>
-            <td>15:00</td>
-            <td>300</td>
-        </tr>
-        <tr>
-            <td>TE_F3</td>
-            <td>1:1</td>
-            <td>2.50</td>
-            <td>100</td>
-            <td>10</td>
-            <td>10</td>
-            <td>5:00</td>
-            <td>20</td>
-            <td>10:00</td>
-            <td>280</td>
-            <td>20</td>
-            <td>10:00</td>
-            <td>245</td>
-        </tr>
+        <% for (i = 0; i < settingsArray.length; i++) { %>
+            <tr id="tableRow<%=i%>">
+                <td><%=settingsArray[i].saveNumber%></td>
+                <td><%=settingsArray[i].scalingRatio%></td>
+                <td><%=settingsArray[i].filamentDiameter%></td>
+                <td><%=settingsArray[i].filamentLength%></td>
+                <td><%=settingsArray[i].scalarMotor1Speed%></td>
+                <td><%=settingsArray[i].scalarMotor2Speed%></td>
+                <td><%=settingsArray[i].scalarRunDuration%></td>
+                <td><%=settingsArray[i].mixerMotor1Speed%></td>
+                <td><%=settingsArray[i].mixerRunDuration%></td>
+                <td><%=settingsArray[i].mixerTemperature%></td>
+                <td><%=settingsArray[i].extruderMotorSpeed%></td>
+                <td><%=settingsArray[i].extruderRunDuration%></td>
+                <td><%=settingsArray[i].extruderTemperature%></td>
+                <td>
+                    <a id="settingDelete<%=i%>" class="btn btn-dark btn-circle ms-1" role="button" onclick="settingDelete('<%=settingsArray[i].saveNumber %>')">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+                <td>
+                    <a id="settingUse<%=i%>" class="btn btn-dark btn-circle ms-1" role="button" onclick="settingUse('<%=settingsArray[i].saveNumber %>')">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </a>
+                </td>
+            </tr>
+        <% } %>
     </tbody>
 </table>

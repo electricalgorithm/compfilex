@@ -15,7 +15,14 @@ This project aims to build a machine to make composite filament within given rat
 
 ## Web Application
 
-![Web App Working Demo](https://github.com/electricalgorithm/compfilex/raw/main/assets/webapp_1.gif)
+[![Compfilex Demo 1.1 Video Link](https://img.youtube.com/vi/-NbN3ADiRs4/0.jpg)](https://www.youtube.com/watch?v=-NbN3ADiRs4)
+
+**Features**
+- Site name and description change in `config.env.js` file.
+- Works with more then one user.
+- RESTful API for microcontroller applications and Socket.io communication between front-end and back-end.
+- Dynamic setting change on the front end.
+- Saving current settings to a library, and use them later.
 
 ## Microcontroller
 

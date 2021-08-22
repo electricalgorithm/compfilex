@@ -101,10 +101,83 @@ let user = new mongoose.Schema({
 
     },
 
-    savedSettings: {
-        type: Object,
-        required: false
+    savedSettingsCount: {
+            type: Number,
+            required: true,
+            default: 0
     },
+
+    savedSettings: [{
+        saveNumber: {
+            type: Number,
+            required: true
+        },
+
+        scalingRatio: {
+            type: String,
+            required: true
+        },
+
+        filamentDiameter: {
+            type: Number,
+            required: true
+        },
+        
+        filamentLength: {
+            type: Number,
+            required: true
+        },
+        
+        scalarMotor1Speed: {
+            type: Number,
+            required: true
+        },
+
+        scalarMotor2Speed: {
+            type: Number,
+            required: true
+        },
+
+        scalarRunDuration: {
+            type: String,
+            required: true
+        },
+
+        mixerMotor1Speed: {
+            type: Number,
+            required: true
+        },
+
+        mixerTemperature: {
+            type: Number,
+            required: true
+        },
+
+        mixerRunDuration: {
+            type: String,
+            required: true
+        },
+
+        extruderMotorSpeed: {
+            type: Number,
+            required: true
+        },
+
+        extruderRunDuration: {
+            type: String,
+            required: true
+        },
+
+        extruderTemperature: {
+            type: Number,
+            required: true
+        },
+
+        collectorMotor1Speed: {
+            type: Number,
+            required: true
+        }
+    }],
 
     activeData: {
         mixerTemperature1: Number,

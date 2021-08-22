@@ -35,10 +35,9 @@ var socketHandler = async (socket, io) => {
         console.log(`${new Date().toString()} -> SOCKET_ASSIGN ${socket.id} in ${socket.request.session.username}`)
     
         // Send a message to all sockets from a user if one connects.
-        io.to(socket.request.session.username).emit("room_entered", {
-            socket_ID: socket.id,
-            socket_ROOM: socket.request.session.username,
-            status: "OK"
+        io.to(socket.request.session.username).emit("conf_room_entered", {
+            status: "OK",
+            message: `Socket ${socket.id} has been assigned to room ${socket.request.session.username}.`
         });
 
         // In first time entering, send the data.
@@ -58,7 +57,7 @@ var socketHandler = async (socket, io) => {
                         // Change setting_name to setting_value in the database.
                         doc.currentSetting[object.setting_name] = object.setting_value;
                         await doc.save();
-                        console.log(`${new Date().toString()} -> For ${socket.request.session.username}, ${object.setting_name}=${object.setting_value}`);
+                        console.log(`${new Date().toString()} -> ${socket.request.session.username}: ${object.setting_name}=${object.setting_value}`);
 
                         // After saving, send new data to client.
                         send_reload_data(socket, io);
@@ -68,6 +67,100 @@ var socketHandler = async (socket, io) => {
                     console.error(`${new Date().toString()} -> ERROR: ${error}`);
                 })
             }
+        })
+
+        socket.on("save_current_setting", async (object) => {
+            if (object.length != 0) {
+                // Search for the username in the database.
+                await userScheme.findOne({
+                    userName: socket.request.session.username
+                })
+                .then(async (doc) => {
+                    if (doc._id != undefined) {
+                        var fromDatabase = doc.currentSetting;
+
+                        // If the one client send us is the same with the entry in database,
+                        // save it to the savedSettings object in that user's entry.
+                        if (JSON.stringify(object) == JSON.stringify(fromDatabase)) {
+                            object.saveNumber = doc.savedSettingsCount;
+                            doc.savedSettingsCount += 1;
+                            doc.savedSettings.push(object);
+                            await doc.save();
+
+                            console.log(`${new Date().toString()} -> ${socket.request.session.username}: current settings saved.`);
+
+                            io.to(socket.request.session.username).emit("conf_save_current_setting", {
+                                status: "OK",
+                                message: `Current settings saved to the library as #${object.saveNumber}.`
+                            })
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error(`${new Date().toString()} -> ERROR: ${error}`);
+                })
+            }
+        })
+
+        socket.on("setting_use", async (settingNo) => {
+            // Search for the username in the database.
+            await userScheme.findOne({
+                userName: socket.request.session.username
+            })
+            .then(async (doc) => {
+                if (doc._id != undefined) {
+                    
+                    // Change current settings to the saved setting.
+                    doc.currentSetting = doc.savedSettings.find((obj) => {
+                        return obj.saveNumber == settingNo;
+                    });
+                    await doc.save();
+                    
+                    // Log the change action to server.
+                    console.log(`${new Date().toString()} -> ${socket.request.session.username}: current settings changed to ${settingNo}.`)
+
+                    // Send a confirmation signal to user.
+                    io.to(socket.request.session.username).emit("conf_setting_use", {
+                        status: "OK",
+                        message: "Current settings has been updated.",
+                        redirect: [true, "/dashboard", 1500]
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(`${new Date().toString()} -> ERROR: ${error}`);
+            })
+        })
+
+        socket.on("setting_delete", async (settingNo) => {
+            // Search for the username in the database.
+            await userScheme.findOne({
+                userName: socket.request.session.username
+            })
+            .then(async (doc) => {
+                if (doc._id != undefined) {
+                
+                    // Filter the array with its saveNumber not equal to settingNo we want to delete.
+                    var filteredArray = doc.savedSettings.filter((val, index, arr) => {
+                        return val.saveNumber != settingNo;
+                    });
+
+                    // Save new filtered array as savedSettings to the database.
+                    doc.savedSettings = filteredArray;
+                    await doc.save()
+                    
+                    console.log(`${new Date().toString()} -> ${socket.request.session.username}: setting ${settingNo} is deleted.`)
+
+                    // Send a confirmation signal to user.
+                    io.to(socket.request.session.username).emit("conf_setting_delete", {
+                        status: "OK",
+                        message: "Chosen setting has been deleted."
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(`${new Date().toString()} -> ERROR: ${error}`);
+            })
         })
 
     } else {

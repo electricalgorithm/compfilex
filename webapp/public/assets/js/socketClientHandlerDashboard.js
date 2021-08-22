@@ -1,7 +1,7 @@
 const socket = io("localhost:3525");
 
 // Functions
-var reloadSettings = object => {
+function reloadSettings(object) {
     document.querySelector("#scalingRatioText").innerHTML = object.currentSetting.scalingRatio;
     document.querySelector("#filamentDiameterText").innerHTML = object.currentSetting.filamentDiameter;
     document.querySelector("#filamentLengthText").innerHTML = object.currentSetting.filamentLength;
@@ -14,9 +14,10 @@ var reloadSettings = object => {
     document.querySelector("#extruderMotorSpeedText").innerHTML = object.currentSetting.extruderMotorSpeed;
     document.querySelector("#extruderMotorDurationText").innerHTML = object.currentSetting.extruderRunDuration;
     document.querySelector("#extruderTemperatureText").innerHTML = object.currentSetting.extruderTemperature;
+    document.querySelector("#collectorMotor1SpeedText").innerHTML = object.currentSetting.collectorMotor1Speed;
 }
 
-var reloadActiveData = object => {
+function reloadActiveData(object) {
     document.querySelector("#mixerTemperature1Text").innerHTML = object.activeData.mixerTemperature1;
     document.querySelector("#mixerTemperature2Text").innerHTML = object.activeData.mixerTemperature2;
     document.querySelector("#extruderTemperature1Text").innerHTML = object.activeData.extruderTemperature1;
@@ -34,7 +35,6 @@ var reloadActiveData = object => {
     document.querySelector("#extruderHeater1Text").innerHTML = object.activeData.extruderHeater1 ? "On": "Off"
     document.querySelector("#extruderHeater2Text").innerHTML = object.activeData.extruderHeater2 ? "On": "Off"
 }
-
 
 var changeSetting = () => {
     // Assign values to variables.
@@ -54,22 +54,48 @@ var changeSetting = () => {
     document.querySelector("#changeSettingValueInput").value = "";
 }
 
+// saveSettings function add current settings into savedSettings section of the user's database entry.
+var saveSetting = () => {
+    socket.emit("save_current_setting", {
+        scalingRatio: document.querySelector("#scalingRatioText").innerHTML,
+        filamentDiameter: Number(document.querySelector("#filamentDiameterText").innerHTML),
+        filamentLength: Number(document.querySelector("#filamentLengthText").innerHTML),
+        scalarMotor1Speed: Number(document.querySelector("#scalingMotor1SpeedText").innerHTML),
+        scalarMotor2Speed: Number(document.querySelector("#scalingMotor2SpeedText").innerHTML),
+        scalarRunDuration: document.querySelector("#scalingMotorDurationText").innerHTML,
+        mixerMotor1Speed: Number(document.querySelector("#mixerMotorSpeedText").innerHTML),
+        mixerTemperature: Number(document.querySelector("#mixerTemperatureText").innerHTML),
+        mixerRunDuration: document.querySelector("#mixerMotorDurationText").innerHTML,
+        extruderMotorSpeed: Number(document.querySelector("#extruderMotorSpeedText").innerHTML),
+        extruderRunDuration: document.querySelector("#extruderMotorDurationText").innerHTML,
+        extruderTemperature: Number(document.querySelector("#extruderTemperatureText").innerHTML),
+        collectorMotor1Speed: Number(document.querySelector("#collectorMotor1SpeedText").innerHTML)
+    })
+}
 
-/* Socket Receiving 
-- on method: to receieve
-- emit method: to send
-*/
-socket.on("room_entered", message => {
-    console.log(message);
+// Receieve room entering confirmation.
+socket.on("conf_room_entered", object => {
+    if (object.status == "OK") console.log(object.message);
 });
 
 // Reload data in the front-end.
 socket.on("reload_data", object => {
     if (object.currentSetting != undefined) reloadSettings(object);
     if (object.activeData != undefined) relaoadActiveData(object);
-
-    console.log(object);
 });
+
+// Current settings' save confirmation handling.
+socket.on("conf_save_current_setting", object => {
+    if (object.status != "OK") return;
+    
+    // Showing a snackbar message.
+    var snackBar = document.querySelector("#snackbar");
+    snackBar.innerHTML = object.message;
+    snackBar.className = "show";
+    setTimeout(() => {
+        snackBar.className = snackBar.className.replace("show", "");
+    }, 1500)
+}) 
 
 // Error handling.
 socket.on("error_disconnect", error_message => {

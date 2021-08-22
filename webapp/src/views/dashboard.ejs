@@ -50,13 +50,13 @@
                                         
                                         <!-- SAVE SETTINGS BUTTON -->
                                         <div class="col-3 offset-xxl-1 text-end">
-                                            <a class="btn btn-warning text-start btn-icon-split" role="button" style="width: 35px;height: 35px;padding: 0px;">
+                                            <a onclick="saveSetting()" class="btn btn-warning text-start btn-icon-split" role="button" style="width: 35px;height: 35px;padding: 0px;">
                                                 <i class="fas fa-save" style="text-align: center;width: 20px;height: 20px;margin: 7.5px;"></i>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="card-body">
                                     <div>
                                         <div class="table-responsive">
@@ -109,6 +109,10 @@
                                                     <tr>
                                                         <td>Extruder Temperature (*C)</td>
                                                         <td id="extruderTemperatureText"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Collector Motor Speed (m/s)</td>
+                                                        <td id="collectorMotor1SpeedText"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -168,6 +172,7 @@
                                                             <option value="scalingRatio">Scaling Ratio</option>
                                                             <option value="filamentDiameter">Filament Diameter</option>
                                                             <option value="filamentLength">Filament Length</option>
+                                                            <option value="collectorMotor1Speed">Collector Motor Speed</option>
                                                         </optgroup>
                                                     </select>
                                                 </div>
@@ -344,13 +349,19 @@
                     </div>
                 </div>
             </div>
+            <div id="snackbar"></div>
             <%- include("./partials/footer_1.ejs") %>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
     <script src="assets/js/script.min.js"></script>
-    <%- include("./partials/socket.ejs") %>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" 
+        integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" 
+        crossorigin="anonymous">
+    </script>
+
+    <script src="/assets/js/socketClientHandlerDashboard.js"></script>
 </body>
 
 </html>

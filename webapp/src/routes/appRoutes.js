@@ -2,6 +2,7 @@ const express = require("express")
 const path = require("path")
 const ejs = require("ejs")
 const config = require("../config.env")
+const userScheme = require("../models/user.model")
 router = express.Router()
 
 
@@ -61,14 +62,29 @@ router.get("/dashboard", isAuth, (req, res) => {
     })
 })
 
-router.get("/saved-settings", isAuth, (req, res) => {
+router.get("/saved-settings", isAuth, async (req, res) => {
+    var setArr = [];
+
+    await userScheme.findOne({
+        userName: req.session.username
+    })
+    .then(async (doc) => {
+        if (doc._id != undefined) {
+            setArr = doc.savedSettings;
+        }
+    })
+    .catch(error => {
+        console.error(`${new Date().toString()} -> ERROR: ${error}`);
+    })
+
     res.render("saved-settings", {
         page_name: "Saved Settings",
         user_name: req.session.username,
         site_name: config.SITE_NAME,
         site_description: config.SITE_DESCRPTION,
         current_year: (new Date).getFullYear(),
-        req_auth: req.session.isAuth
+        req_auth: req.session.isAuth,
+        settingsArray: setArr
     })
 })
 
