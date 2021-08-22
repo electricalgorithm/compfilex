@@ -88,4 +88,30 @@ router.get("/saved-settings", isAuth, async (req, res) => {
     })
 })
 
+router.get("/about", (req, res) => {
+    res.render("about", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "About",
+        user_name: req.session.username,
+        req_auth: req.session.isAuth,
+        current_year: (new Date()).getFullYear(),
+        about_text: "Composite Filament Extruder is a project to make composite materials easily in home. \
+                    It includes three main parts: machine, control panel, and microcontroller. All of the \
+                    parts are been developing by undergrad research assistants in Sustainable Energy      \
+                    Research Laboratory, Istanbul University."
+    })
+})
+
+router.get("/change-password", isAuth, (req, res) => {
+    res.render("change-password", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "Change Password",
+        user_name: req.session.username,
+        req_auth: req.session.isAuth,
+        current_year: (new Date()).getFullYear()
+    })
+})
+
 module.exports = router

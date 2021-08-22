@@ -129,6 +129,49 @@ router.post("/user", async (req, res) => {
             res.status(500).send(err)
         })
     }
+
+
+    if (req.query.type == "changepassword") {
+        // Check the request JSON file got userName and passwordHash properties.
+        // If not, return status 500.
+        if (req.session.username == undefined) {
+                return res.status(500).send("Log in first.")
+        }
+        
+        // Create a new object from request body.
+        let postedData = req.body
+        // Hash the both passwords and save it to object.
+        postedData.oldPassword = crypto.createHmac("sha256", sKey).update(postedData.oldPassword).digest("hex")
+        postedData.newPassword = crypto.createHmac("sha256", sKey).update(postedData.newPassword).digest("hex")
+
+        // Finding the datum entry from given crediential information in the database.
+        await userScheme.findOne({
+            userName: req.session.username,
+            passwordHash: postedData.oldPassword
+        })
+        .then(doc => {
+            if (doc._id != undefined) {
+                
+                // Change the lastAccessTime property of the datum to current date. 
+                doc.passwordHash = postedData.newPassword;
+                doc.save();
+                
+                // Send a "OK" message with status code 200, after everyting is correct.
+                res.status(200).send({
+                    "status": "OK"
+                });
+            }
+            else {
+                // Send invalid credientials message with status code 500.
+                req.session.error = "Invalid credentials.";
+                res.status(500).send("Wrong username or password.")
+            }
+        })
+        .catch(err => {
+            res.status(500).send(err)
+        })
+    }
+
 })
 
 module.exports = router
