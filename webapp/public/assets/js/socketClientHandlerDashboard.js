@@ -1,4 +1,8 @@
-const socket = io("localhost:3525");
+const socket = io("/", {
+    extraHeaders: {
+        connType: "web-client"
+    }
+});
 
 // Functions
 function reloadSettings(object) {
@@ -81,7 +85,7 @@ socket.on("conf_room_entered", object => {
 // Reload data in the front-end.
 socket.on("reload_data", object => {
     if (object.currentSetting != undefined) reloadSettings(object);
-    if (object.activeData != undefined) relaoadActiveData(object);
+    if (object.activeData != undefined) reloadActiveData(object);
 });
 
 // Current settings' save confirmation handling.

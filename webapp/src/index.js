@@ -7,7 +7,7 @@ const config = require("./config.env.js");
 const ejs = require("ejs");
 const MongoDBSession = require("connect-mongodb-session")(session);
 const mongoose = require("mongoose");
-const socketHandler = require("./socketHandler");
+const socketHandler = require("./routes/socketHandler");
 
 // Creating app and Socket
 const app = express();
@@ -91,7 +91,7 @@ app.use((req, res, next) => {
 
 // Socket.io Connection Handling
 // Rooms will be used to make calls to all the same users which has different socket IDs.
-// Every username will be a room.
+// Every username will be a room. If MCU connects, it will check its own machine ID.
 io.on("connection", socket => socketHandler(socket, io))
 
 httpServer.listen(PORT, () => console.info(`Server has started on ${PORT}`));

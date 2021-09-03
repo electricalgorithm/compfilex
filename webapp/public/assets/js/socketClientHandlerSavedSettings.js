@@ -1,4 +1,8 @@
-const socket = io("localhost:3525");
+const socket = io("/", {
+    extraHeaders: {
+        connType: "web-client"
+    }
+});
 
 var settingUse = (setNo) => {
     if (setNo == undefined) return;

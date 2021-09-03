@@ -1,4 +1,4 @@
-const userScheme = require("./models/user.model");
+const userScheme = require("../models/user.model");
 const mongoose = require("mongoose");
 
 var send_reload_data = async (socket, io) => {
@@ -22,14 +22,17 @@ var send_reload_data = async (socket, io) => {
     // Send machine settings and active data.
     io.to(socket.request.session.username).emit("reload_data", {
         currentSetting: currentSettingFromUser,
-        active: activeDataFromUser
+        activeData: activeDataFromUser
     });
 }
 
 var socketHandler = async (socket, io) => {
-    console.log(`${new Date().toString()} -> SOCKET_START (${socket.id})`)
-    
+       
+    // Web-Client Side Socket Handling
+    // ------------------------------
     if (socket.request.session.isAuth) {
+        console.log(`${new Date().toString()} -> SOCKET_START (${socket.id})`);
+
         // Assign connected socket to right socket room.
         socket.join(socket.request.session.username);
         console.log(`${new Date().toString()} -> SOCKET_ASSIGN ${socket.id} in ${socket.request.session.username}`)
@@ -162,6 +165,70 @@ var socketHandler = async (socket, io) => {
                 console.error(`${new Date().toString()} -> ERROR: ${error}`);
             })
         })
+
+    // MCU Side Socket Handling
+    // ------------------------
+    } else if (socket.request.headers.conntype.includes("MCU")) {
+        console.log(`${new Date().toString()} -> MCU_SOCKET_START (${socket.id})`)
+    
+        socket.on("send_data", async (object) => {
+            if (object.mcuID != undefined) {
+                await userScheme.findOne({
+                    mcuID: object.mcuID
+                })
+                .then(async (doc) => {
+                    if (doc._id != undefined || doc._id != null) {
+                        console.log(`${new Date().toString()} -> MCU_SOCKET_REQ (${object.mcuID})(${doc.userName})`);
+
+                        // Write new data if exist.
+                        doc.activeData.mixerTemperature1    = object.mixerTemperature1      || doc.activeData.mixerTemperature1
+                        doc.activeData.mixerTemperature2    = object.mixerTemperature2      || doc.activeData.mixerTemperature2
+                        doc.activeData.extruderTemperature1 = object.extruderTemperature1   || doc.activeData.extruderTemperature1
+                        doc.activeData.extruderTemperature2 = object.extruderTemperature2   || doc.activeData.extruderTemperature2
+                        doc.activeData.radiusMeterActive1   = object.radiusMeterActive1     || doc.activeData.radiusMeterActive1
+                        doc.activeData.radiusMeterActive2   = object.radiusMeterActive2     || doc.activeData.radiusMeterActive2
+                        doc.activeData.pullerMotor1Speed    = object.pullerMotor1Speed      || doc.activeData.pullerMotor1Speed
+                        doc.activeData.pullerCycleCount     = object.pullerCycleCount       || doc.activeData.pullerCycleCount
+                        doc.activeData.collectorCycleCount  = object.collectorCycleCount    || doc.activeData.collectorCycleCount
+                        if (object.extruderHeater1 != undefined)    doc.activeData.extruderHeater1 = object.extruderHeater1
+                        if (object.extruderHeater2 != undefined)    doc.activeData.extruderHeater2 = object.extruderHeater2
+                        if (object.mixerHeater != undefined)        doc.activeData.mixerHeater = object.mixerHeater
+
+                        // Save the database.
+                        await doc.save()
+                        console.log(`${new Date().toString()} -> MCU_SOCKET_SAVE (${object.mcuID})(${doc.userName})`)
+
+                        // Send the new data to control panel.
+                        io.to(doc.userName).emit("reload_data", {
+                            activeData: doc.activeData
+                        });
+                        console.log(`${new Date().toString()} -> MCU_SOCKET_UPDATE (${object.mcuID})(${doc.userName})`)
+                        
+                    } else {
+                        // Print an error message if mcuID isn't regoconized in database.
+                        console.error(`${new Date().toString()} -> MCU_SOCKET_FAIL mcuID (${object.mcuID}) is not found.`)
+                    }
+                })
+                .catch(error => {
+                    // Print an error message if mcuID isn't regoconized in database.
+                    console.error(`${new Date().toString()} -> MCU_SOCKET_FAIL mcuID (${object.mcuID}) is not found.`)
+                    console.error(`${new Date().toString()} -> ERROR: ${error}`)
+                })
+            } else {
+                // Print an error message if mcuID is not given for instructions.
+                console.error(`${new Date().toString()} -> MCU_SOCKET_FAIL mcuID is not given.`)
+            }
+        })
+        
+        // Emergency State, it is needed whenever clients ones to reach us from console.
+        socket.on("emergency", msg => console.error(`${new Date().toString()} -> SOCKET_EMERGENCY ${msg} from ${socket.id}`))
+
+        // Disconnection of Sockets
+        socket.on("disconnect", () => {
+        console.log(`${new Date().toString()} -> SOCKET_END (${socket.id})`)
+        socket.disconnect()
+        })
+
 
     } else {
         socket.emit("error_disconnect", "error: There is a problem with your login. Please log out and try again.");

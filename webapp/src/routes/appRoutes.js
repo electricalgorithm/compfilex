@@ -20,8 +20,7 @@ const isAuth = (req, res, next) => {
     if (req.session.isAuth) {
         next()
     } else {
-        req.session.error = "You have to login first.";
-        res.redirect("/login")
+        res.redirect("/login");
     }
 }
 
@@ -47,6 +46,17 @@ router.get("/login", (req, res) => {
         page_name: "Login",
         current_year: (new Date).getFullYear(),
         req_auth: req.session.isAuth
+    })
+})
+
+router.get("/mcuemulator", (req, res) => {
+    res.render("mcuemulator", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "MCU Emulator",
+        current_year: (new Date).getFullYear(),
+        req_auth: req.session.isAuth,
+        about_text: "Do whatever you want!"
     })
 })
 
