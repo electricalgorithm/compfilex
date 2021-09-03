@@ -23,23 +23,14 @@ Server is the brain of the system. It is a middle-man in communication, a bridge
 ##### Features
 
 - [x] Changeable site name and description.
-
 - [x] Multi-user and multi-machine support. (Note: works with one machine per user now)
-
 - [x] Client-side rendering with [Socket.io](https://socket.io/). It enable us to change data dynamically.
-
 - [x] Server-side rendering with [Embedded Javascript (EJS)](https://ejs.co/).
-
 - [ ] RESTful API for future application development. (Working on it as a side project, not fully implemented.)
-
 - [x] Socket.io API implementation for both client-side and MCU side.
-
 - [x] Machine settings change on client-side web panel. (Changing options can be improved for user experience.)
-
 - [x] Active (changing) data rendering immediately after a data comes from MCU.
-
 - [x] "Saved Settings" page (or database) per user, to save their current settings, and perform them again later.
-
 - [ ] A page must be created to show users their MCU Unique ID.
 
   
@@ -55,15 +46,25 @@ Server is the brain of the system. It is a middle-man in communication, a bridge
 */
 
 const config = {
-    SITE_NAME: "YOUR_SITE_NAME_HERE", 				// For example, "Compfilex"
-    SITE_DESCRPTION: "YOUR_SITE_DESCRIPTION_HERE",	// I suggest you to not use long sentences.
-    PORT: 3525, 									// Port you wanted to use on server.
-    USER_HASH_SALT: `YOUR_HASH_SALT_HERE`, 			// Salt for hashing user passwords.
-    DB_USERNAME: "DB_USERNAME_HERE", 				// Database username, it must be MongoDB database.
-    DB_PASSWORD: "DB_PASSWORD_HERE", 				// Database password.
-    DB_SERVERADDR: "DATABASE_SERVER_ADDRESS", 		// You can use MongoDB Atlas for free.
-    DB_NAME: "DB_NAME",								// Database name.
-    DB_SESSIONS_COLLECTION: "SES_COLLECTION_NAME" 	// Database name for storing sessions.
+    // For example, "Compfilex"
+    // I suggest you to not use long sentences for description.
+    SITE_NAME: "YOUR_SITE_NAME_HERE",
+    SITE_DESCRPTION: "YOUR_SITE_DESCRIPTION_HERE",
+    
+    // Port you wanted to use on server.
+    PORT: 3525,
+    
+    // Salt for hashing user passwords.
+    USER_HASH_SALT: `YOUR_HASH_SALT_HERE`,
+    
+    // Database details, it must be MongoDB database.
+    // You can use MongoDB Atlas for free.
+    DB_USERNAME: "DB_USERNAME_HERE",
+    DB_PASSWORD: "DB_PASSWORD_HERE",
+    DB_SERVERADDR: "DATABASE_SERVER_ADDRESS",
+    DB_NAME: "DB_NAME",
+    
+    DB_SESSIONS_COLLECTION: "SES_COLLECTION_NAME" // Collection name for storing sessions in the given database.
 }
 
 module.exports = config;
