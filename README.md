@@ -1,36 +1,105 @@
 # compfilex
 
-This project aims to build a machine to make composite filament within given rate of materials. There are three sub-projects in it:
+This project aims to build a machine to make composite filament within given rate of materials. There are three sub-projects in it.
 
-* **Web application**: Controls machine through a graphical user interface. Control panel chose to be in web-based because of the cross-platform advantage.
-* **Microcontroller application**: Executes orders send via web application, aka "brain of the machine". For a start, Arduino Mega will be used. Afterwards, one may choose to use 32-bit microcontrollers.
-* **Machine itself**: Does the stuff. There are four parts of it:
-  * Scaler System, in order to scale materials with using motor's speeds.
-  * Mixer System, heats and mixes the materials given.
-  * Extrusion System, also heats and compress mixed stuff, and outputs a filament.
-  * Puller System, pulls filament for radius correction.
-  * Collector System, as name suggests, it collects the filament produced.
+**Server and Web Panel**: Controls machine through a graphical user interface. Control panel chose to be in web-based because of the cross-platform advantage.
+
+**Microcontroller Application**: Executes orders send via web application, aka "brain of the machine". For a start, Arduino Mega will be used as main MCU, and ESP-01 will be used as WIFI MCU. Afterwards, I may try to implement main MCU to mbed or MicroPython libraries.
+
+**Mechanical Machine**: Does the stuff. There are four parts of it:
+
+* Scalar System, in order to scale materials with using motor's speeds.
+* Mixer System, heats and mixes the materials given.
+* Extrusion System, also heats and compress mixed stuff, and outputs a filament.
+* Puller System, pulls filament for radius correction.
+* Collector System, as name suggests, it collects the filament produced.
 
 
 
-## Web Application
+## Server (and Web Panel) Design
 
-[![Compfilex Demo 1.1 Video Link](https://img.youtube.com/vi/-NbN3ADiRs4/0.jpg)](https://www.youtube.com/watch?v=-NbN3ADiRs4)
+Server is the brain of the system. It is a middle-man in communication, a bridge to the database, and calculator (instruction maker) for the MCU. Main flow is like this: MCUs will only send the data, then client-side (the user who access to control panel) decide what to do, and send the new decision to server. Server will send the necessary information to the MCU, and it will change its GPIOs. **Server can be used for more then one user and more then one machine.**
 
-**Features**
-- Site name and description change in `config.env.js` file.
-- Works with more then one user.
-- RESTful API for microcontroller applications and Socket.io communication between front-end and back-end.
-- Dynamic setting change on the front end.
-- Saving current settings to a library, and use them later.
+##### Features
 
-## Microcontroller
+- [x] Changeable site name and description.
 
-will be edited!
+- [x] Multi-user and multi-machine support. (Note: works with one machine per user now)
 
-## Machine
+- [x] Client-side rendering with [Socket.io](https://socket.io/). It enable us to change data dynamically.
 
-All the model we have been designed is added to repository. However, it is not made from measurements -so, not for production. We're trying to make a machine from daily-life products, hang in there, it will come. Check SketchUp file for more detail perspective.
+- [x] Server-side rendering with [Embedded Javascript (EJS)](https://ejs.co/).
+
+- [ ] RESTful API for future application development. (Working on it as a side project, not fully implemented.)
+
+- [x] Socket.io API implementation for both client-side and MCU side.
+
+- [x] Machine settings change on client-side web panel. (Changing options can be improved for user experience.)
+
+- [x] Active (changing) data rendering immediately after a data comes from MCU.
+
+- [x] "Saved Settings" page (or database) per user, to save their current settings, and perform them again later.
+
+- [ ] A page must be created to show users their MCU Unique ID.
+
+  
+
+##### Right Way to Create `config.env.js` File
+
+```js
+/*
+* CONFIG file for Compfilex
+* The file must be in the root folder.
+* Check out GitHub page for more information.
+* https://github.com/electricalgorithm/compfilex
+*/
+
+const config = {
+    SITE_NAME: "YOUR_SITE_NAME_HERE", 				// For example, "Compfilex"
+    SITE_DESCRPTION: "YOUR_SITE_DESCRIPTION_HERE",	// I suggest you to not use long sentences.
+    PORT: 3525, 									// Port you wanted to use on server.
+    USER_HASH_SALT: `YOUR_HASH_SALT_HERE`, 			// Salt for hashing user passwords.
+    DB_USERNAME: "DB_USERNAME_HERE", 				// Database username, it must be MongoDB database.
+    DB_PASSWORD: "DB_PASSWORD_HERE", 				// Database password.
+    DB_SERVERADDR: "DATABASE_SERVER_ADDRESS", 		// You can use MongoDB Atlas for free.
+    DB_NAME: "DB_NAME",								// Database name.
+    DB_SESSIONS_COLLECTION: "SES_COLLECTION_NAME" 	// Database name for storing sessions.
+}
+
+module.exports = config;
+```
+
+
+##### Videos on YouTube
+
+* Control Panel Early Showcase (23.08.2021): https://www.youtube.com/watch?v=-NbN3ADiRs4
+* Communication between MCU and Server, with Client-Side Rendering (04.09.2021): https://www.youtube.com/watch?v=0adJoKZSHKA
+
+
+
+## Embedded System Design
+
+Main microcontroller will be Arduino Mega in the project. To establish the connection between main MCU and NodeJS server, we use ESP-01 SoC and Socket.io (WebSocket) protocol. It is not fully implemented, yet.
+
+##### Features
+
+- [x] Server connection with using [Socket.io](https://socket.io/) (a special kind of WebSocket) protocol and [Links2004's arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets) library.
+- [x] Data sending/receiving from ESP-01 to NodeJS server.
+- [ ] Data sending/receiving from NodeJS to ESP-01.
+- [ ] Data sending protocol creation, and implementing between *Arduino Mega* (main MCU) and *ESP-01* (WIFI MCU).
+- [ ] Run-time configurable *WIFI SSID*, *WIFI password*, *server address*, *server port*, and *MCU unique ID*.
+
+
+
+##### Communication Map
+
+![Communication Model Map 1](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/communication-model-1.png)
+
+
+
+## Mechanical Design
+
+All the model we have been designed is added to repository. However, it is not made from measurements -- not for production. We're trying to make a machine from daily-life products, hang in there, it will come. Check SketchUp file for more detail perspective.
 
 ![Model Unmeasured Design 1](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/machine-model-1.png)
 
