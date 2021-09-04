@@ -86,9 +86,15 @@ Main microcontroller will be Arduino Mega in the project. To establish the conne
 
 - [x] Server connection with using [Socket.io](https://socket.io/) (a special kind of WebSocket) protocol and [Links2004's arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets) library.
 - [x] Data sending/receiving from ESP-01 to NodeJS server.
-- [ ] Data sending/receiving from NodeJS to ESP-01.
+- [x] Data sending/receiving from NodeJS to ESP-01.
 - [ ] Data sending protocol creation, and implementing between *Arduino Mega* (main MCU) and *ESP-01* (WIFI MCU).
 - [ ] Run-time configurable *WIFI SSID*, *WIFI password*, *server address*, *server port*, and *MCU unique ID*.
+- [ ] GPIO Handling on Arduino Mega side.
+  - [ ] Temperatures' data
+  - [ ] Motors driving
+  - [ ] Motors' data
+  - [ ] Filament diameter system data
+  - [ ] Relay driving for heaters
 
 
 
