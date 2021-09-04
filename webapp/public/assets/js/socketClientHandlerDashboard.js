@@ -19,6 +19,7 @@ function reloadSettings(object) {
     document.querySelector("#extruderMotorDurationText").innerHTML = object.currentSetting.extruderRunDuration;
     document.querySelector("#extruderTemperatureText").innerHTML = object.currentSetting.extruderTemperature;
     document.querySelector("#collectorMotor1SpeedText").innerHTML = object.currentSetting.collectorMotor1Speed;
+    document.querySelector("#pullerMotor1SpeedText").innerHTML = object.currentSetting.pullerMotor1Speed;
 }
 
 function reloadActiveData(object) {
@@ -27,17 +28,25 @@ function reloadActiveData(object) {
     document.querySelector("#extruderTemperature1Text").innerHTML = object.activeData.extruderTemperature1;
     document.querySelector("#extruderTemperature2Text").innerHTML = object.activeData.extruderTemperature2;
     document.querySelector("#totalTurnText").innerHTML = object.activeData.pullerCycleCount;
-    document.querySelector("#estimetedTotalLengthText").innerHTML = object.activeData.collectorCylceCount 
-                                                                    * 2 * 3.141527 * object.currentSetting.collectorDiameter;
-    document.querySelector("#pullerMotor1SpeedText").innerHTML = object.activeData.pullerMotor1Speed;
-    document.querySelector("#pullerMotor1SpeedText").innerHTML = object.activeData.pullerMotor1Speed;
-    document.querySelector("#radiusMeterActive1Text").innerHTML = object.activeData.radiusMeterActive1;
-    document.querySelector("#radiusMeterActive2Text").innerHTML = object.activeData.radiusMeterActive2;
+    document.querySelector("#activePullerMotor1SpeedText").innerHTML = object.activeData.pullerMotor1Speed;
+    document.querySelector("#activeCollectorMotor1SpeedText").innerHTML = object.activeData.collectorMotor1Speed;
+    document.querySelector("#activeScalarMotor1SpeedText").innerHTML = object.activeData.scalarMotor1Speed;
+    document.querySelector("#activeScalarMotor2SpeedText").innerHTML = object.activeData.scalarMotor2Speed;
+    document.querySelector("#activeExtruderMotorSpeedText").innerHTML = object.activeData.extruderMotorSpeed;
+    document.querySelector("#activeMixerMotorSpeedText").innerHTML = object.activeData.mixerMotor1Speed;
+    //document.querySelector("#radiusMeterActive1Text").innerHTML = object.activeData.radiusMeterActive1;
+    //document.querySelector("#radiusMeterActive2Text").innerHTML = object.activeData.radiusMeterActive2;
 
     // These are not implemented on the front-end. Need to create IDs.
-    document.querySelector("#mixerHeaterText").innerHTML = object.activeData.mixerHeater ? "On": "Off";
-    document.querySelector("#extruderHeater1Text").innerHTML = object.activeData.extruderHeater1 ? "On": "Off"
-    document.querySelector("#extruderHeater2Text").innerHTML = object.activeData.extruderHeater2 ? "On": "Off"
+    //document.querySelector("#mixerHeaterText").innerHTML = object.activeData.mixerHeater ? "On": "Off";
+    //document.querySelector("#extruderHeater1Text").innerHTML = object.activeData.extruderHeater1 ? "On": "Off"
+    //document.querySelector("#extruderHeater2Text").innerHTML = object.activeData.extruderHeater2 ? "On": "Off"
+
+    if (object.hasOwnProperty("currentSetting") && object.currentSetting.hasOwnProperty("collectorDiameter"))
+        document.querySelector("#estimetedTotalLengthText").innerHTML = Number(object.activeData.collectorCylceCount)
+                                                                        * 2 * 3.141527 * Number(object.currentSetting.collectorDiameter);
+    else document.querySelector("#estimetedTotalLengthText").innerHTML = Number(object.activeData.collectorCylceCount)
+                                                                        * 2 * 3.141527 * Number(document.querySelector("#filamentDiameterText").innerHTML);
 }
 
 var changeSetting = () => {

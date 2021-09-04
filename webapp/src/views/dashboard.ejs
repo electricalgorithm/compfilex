@@ -114,6 +114,10 @@
                                                         <td>Collector Motor Speed (m/s)</td>
                                                         <td id="collectorMotor1SpeedText"></td>
                                                     </tr>
+                                                    <tr>
+                                                        <td>Puller Motor Speed (m/s)</td>
+                                                        <td id="pullerMotor1SpeedText"></td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -173,6 +177,7 @@
                                                             <option value="filamentDiameter">Filament Diameter</option>
                                                             <option value="filamentLength">Filament Length</option>
                                                             <option value="collectorMotor1Speed">Collector Motor Speed</option>
+                                                            <option value="pullerMotor1Speed">Puller Motor Speed</option>
                                                         </optgroup>
                                                     </select>
                                                 </div>
@@ -203,19 +208,19 @@
                                                 <div class="col-4 text-start">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Scaler 1 (m/s)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span>21</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="activeScalarMotor1SpeedText"></span></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-4 text-start">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Scaler 2 (m/s)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span>30</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="activeScalarMotor2SpeedText"></span></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-4">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Mixer (m/s)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span>50</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="activeMixerMotorSpeedText"></span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -223,19 +228,19 @@
                                                 <div class="col-4 text-start">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Extruder (m/s)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span>35</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="activeExtruderMotorSpeedText"></span></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-4 text-start">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="color: var(--bs-gray-dark);"><span style="color: var(--bs-gray-dark);">Puller (m/s)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span>7</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="activePullerMotor1SpeedText"></span></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-4">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Collector (m/s)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span>13</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="activeCollectorMotor1SpeedText"></span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -252,13 +257,13 @@
                                                 <div class="col text-start">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Mixer 1 (*C)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span id="mixerTemperature1Text">242</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="mixerTemperature1Text"></span></div>
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Mixer 2 (*C)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span id="mixerTemperature2Text">235</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="mixerTemperature2Text"></span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -266,13 +271,13 @@
                                                 <div class="col text-start">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Extruder 1 (*C)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span id="extruderTemperature1Text">283</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="extruderTemperature1Text"></span></div>
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="text-start" style="transform: scale(1) skew(0deg);filter: hue-rotate(0deg);margin: 15px;">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-gray-dark);">Extruder 2 (*C)</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span id="extruderTemperature2Text">279</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span id="extruderTemperature2Text"></span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -296,7 +301,7 @@
                                                                     <div class="row align-items-center no-gutters">
                                                                         <div class="col me-2">
                                                                             <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="color: var(--bs-green);"><span style="color: var(--bs-indigo);">Total turn (360 deg)</span></div>
-                                                                            <div class="text-dark fw-bold h5 mb-0"><span id="totalTurnText">78</span></div>
+                                                                            <div class="text-dark fw-bold h5 mb-0"><span id="totalTurnText"></span></div>
                                                                         </div>
                                                                         <div class="col-auto"><i class="fas fa-circle-notch fa-2x text-gray-300"></i></div>
                                                                     </div>
@@ -312,7 +317,7 @@
                                                                         <div class="row align-items-center no-gutters">
                                                                             <div class="col me-2">
                                                                                 <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Estimated Total Length (cm)</span></div>
-                                                                                <div class="text-dark fw-bold h5 mb-0"><span id="estimetedTotalLengthText">41</span></div>
+                                                                                <div class="text-dark fw-bold h5 mb-0"><span id="estimetedTotalLengthText"></span></div>
                                                                             </div>
                                                                             <div class="col-auto"><i class="fas fa-ruler fa-2x text-gray-300"></i></div>
                                                                         </div>
@@ -327,8 +332,8 @@
                                                                 <div class="card-body">
                                                                     <div class="row align-items-center no-gutters">
                                                                         <div class="col me-2">
-                                                                            <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-red);">Average Dıameter (mm)</span></div>
-                                                                            <div class="text-dark fw-bold h5 mb-0"><span>1.28</span></div>
+                                                                            <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-red);">Average Diameter (mm)</span></div>
+                                                                            <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                                                         </div>
                                                                         <div class="col-auto"><i class="fas fa-window-minimize fa-2x text-gray-300"></i></div>
                                                                     </div>

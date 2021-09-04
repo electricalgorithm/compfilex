@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const express = require("express")
 const userScheme = require("../models/user.model")
 const path = require("path")
-const config = require("../config.env.js")
+const config = require("../config.env.js");
 let router = express.Router()
 
 // Secret salt-key for hash function.
@@ -44,7 +44,8 @@ router.post("/user", async (req, res) => {
             extruderMotorSpeed: 0,
             extruderRunDuration: "00:00",
             extruderTemperature: 0,
-            collectorMotor1Speed: 0
+            collectorMotor1Speed: 0,
+            pullerMotor1Speed: 0
         }
         postedData.activeData = {
             mixerTemperature1: 0,
@@ -56,9 +57,14 @@ router.post("/user", async (req, res) => {
             extruderHeater2: false,
             radiusMeterActive1: 0,
             radiusMeterActive2: 0,
-            pullerMotor1Speed: 0,
             pullerCycleCount: 0,
-            collectorCycleCount: 0
+            collectorCycleCount: 0,
+            scalarMotor1Speed: 0,
+            scalarMotor2Speed: 0,
+            mixerMotor1Speed: 0,
+            extruderMotorSpeed: 0,
+            collectorMotor1Speed: 0,
+            pullerMotor1Speed: 0,
         }
 
         // Hash the password and save it to object.

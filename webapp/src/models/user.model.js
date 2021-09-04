@@ -182,16 +182,25 @@ let user = new mongoose.Schema({
     activeData: {
         mixerTemperature1: Number,
         mixerTemperature2: Number,
-        mixerHeater: Boolean,
         extruderTemperature1: Number,
         extruderTemperature2: Number,
-        extruderHeater1: Boolean,
-        extruderHeater2: Boolean,
+        
         radiusMeterActive1: Number,
         radiusMeterActive2: Number,
+        
         pullerMotor1Speed: Number,
+        collectorMotor1Speed: Number,
+        scalarMotor1Speed: Number,
+        scalarMotor2Speed: Number,
+        mixerMotor1Speed: Number,
+        extruderMotorSpeed: Number,
+
         pullerCycleCount: Number,
-        collectorCycleCount: Number
+        collectorCycleCount: Number,
+
+        extruderHeater1: Boolean,
+        extruderHeater2: Boolean,
+        mixerHeater: Boolean
     }
 })
 

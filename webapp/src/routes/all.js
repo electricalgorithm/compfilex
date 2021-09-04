@@ -1,6 +1,5 @@
 const express = require("express")
 const logScheme = require("../models/log.model")
-const dataInMemory = require("../data.js")
 let router = express.Router()
 
 router.post("/all", (req, res) => {
