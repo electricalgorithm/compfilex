@@ -27,7 +27,7 @@ var send_reload_data = async (socket, io) => {
 }
 
 var socketHandler = async (socket, io) => {
-       
+
     // Web-Client Side Socket Handling
     // ------------------------------
     if (socket.request.session.isAuth) {
@@ -181,15 +181,24 @@ var socketHandler = async (socket, io) => {
                         console.log(`${new Date().toString()} -> MCU_SOCKET_REQ (${object.mcuID})(${doc.userName})`);
 
                         // Write new data if exist.
-                        doc.activeData.mixerTemperature1    = object.mixerTemperature1      || doc.activeData.mixerTemperature1
-                        doc.activeData.mixerTemperature2    = object.mixerTemperature2      || doc.activeData.mixerTemperature2
-                        doc.activeData.extruderTemperature1 = object.extruderTemperature1   || doc.activeData.extruderTemperature1
-                        doc.activeData.extruderTemperature2 = object.extruderTemperature2   || doc.activeData.extruderTemperature2
-                        doc.activeData.radiusMeterActive1   = object.radiusMeterActive1     || doc.activeData.radiusMeterActive1
-                        doc.activeData.radiusMeterActive2   = object.radiusMeterActive2     || doc.activeData.radiusMeterActive2
-                        doc.activeData.pullerMotor1Speed    = object.pullerMotor1Speed      || doc.activeData.pullerMotor1Speed
-                        doc.activeData.pullerCycleCount     = object.pullerCycleCount       || doc.activeData.pullerCycleCount
-                        doc.activeData.collectorCycleCount  = object.collectorCycleCount    || doc.activeData.collectorCycleCount
+                        if (object.mixerTemperature1 != undefined) doc.activeData.mixerTemperature1 = object.mixerTemperature1;
+                        if (object.mixerTemperature2 != undefined) doc.activeData.mixerTemperature2 = object.mixerTemperature2;
+                        if (object.extruderTemperature1 != undefined) doc.activeData.extruderTemperature1 = object.extruderTemperature1;
+                        if (object.extruderTemperature2 != undefined) doc.activeData.extruderTemperature2 = object.extruderTemperature2;
+                        
+                        if (object.radiusMeterActive1 != undefined) doc.activeData.radiusMeterActive1 = object.radiusMeterActive1;
+                        if (object.radiusMeterActive2 != undefined) doc.activeData.radiusMeterActive2 = object.radiusMeterActive2;
+                        
+                        if (object.pullerMotor1Speed != undefined) doc.activeData.pullerMotor1Speed = object.pullerMotor1Speed;
+                        if (object.collectorMotor1Speed != undefined) doc.activeData.collectorMotor1Speed = object.collectorMotor1Speed;
+                        if (object.scalarMotor1Speed != undefined) doc.activeData.scalarMotor1Speed = object.scalarMotor1Speed;
+                        if (object.scalarMotor2Speed != undefined) doc.activeData.scalarMotor2Speed = object.scalarMotor2Speed; 
+                        if (object.mixerMotor1Speed != undefined) doc.activeData.mixerMotor1Speed = object.mixerMotor1Speed;
+                        if (object.extruderMotorSpeed != undefined) doc.activeData.extruderMotorSpeed = object.extruderMotorSpeed;
+                        
+                        if (object.pullerCycleCount != undefined) doc.activeData.pullerCycleCount = object.pullerCycleCount;
+                        if (object.collectorCycleCount != undefined) doc.activeData.collectorCycleCount = object.collectorCycleCount;
+
                         if (object.extruderHeater1 != undefined)    doc.activeData.extruderHeater1 = object.extruderHeater1
                         if (object.extruderHeater2 != undefined)    doc.activeData.extruderHeater2 = object.extruderHeater2
                         if (object.mixerHeater != undefined)        doc.activeData.mixerHeater = object.mixerHeater
@@ -203,6 +212,23 @@ var socketHandler = async (socket, io) => {
                             activeData: doc.activeData
                         });
                         console.log(`${new Date().toString()} -> MCU_SOCKET_UPDATE (${object.mcuID})(${doc.userName})`)
+
+
+                        socket.emit("settings_update", {
+                            "scalarMotor1Speed": 125.125,
+                            "scalarMotor2Speed": 250.25,
+                            "mixerMotor1Speed": 50.50,
+                            "extruderMotorSpeed": 10,
+                            "pullerMotor1Speed": 30.15,
+                            "collectorMotor1Speed": 40,
+                            "scalingMotorsDuration": 15000,
+                            "mixerMotorsDuration": 25000,
+                            "extruderMotorsDuration": 35000,
+                            "mixerTemperature": 27,
+                            "extruderTemperature": 150,
+                            "filamentDiameter": 1.2865,
+                            "filamentLength": 500
+                        })
                         
                     } else {
                         // Print an error message if mcuID isn't regoconized in database.
