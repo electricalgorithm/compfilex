@@ -30,10 +30,22 @@ let user = new mongoose.Schema({
         unique: true
     },
 
+    mcuID: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
     lastAccessTime: String,
     dataCreated: String,
 
     currentSetting: {
+        status: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
+
         scalingRatio: {
             type: String,
             required: true
@@ -95,6 +107,11 @@ let user = new mongoose.Schema({
         },
 
         collectorMotor1Speed: {
+            type: Number,
+            required: true
+        },
+
+        pullerMotor1Speed: {
             type: Number,
             required: true
         }

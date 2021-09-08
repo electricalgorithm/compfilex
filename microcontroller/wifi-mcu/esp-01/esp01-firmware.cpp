@@ -1,6 +1,7 @@
 /*
  * == COMPFILEX MCU on Arduino ==
- * ver: 0.0.3 (Something's_happening)
+ * software: WIFIMCU firmware
+ * ver: 0.0.6 (MAIL, MAIL, DEAR!)
  * repo: https://github.com/electricalgorithm/compfilex
  * contributors: Gökhan Koçmarlı (@electricalgorithm)
  * 
@@ -25,14 +26,18 @@
 
 
 /*  Global Variables and Configs  */
-const char* ssID = "NETWORK_SSID";
-const char* networkPass = "NETWORK_PASS";
-const char* serverIP = "SERVER_IP";
+const char* ssID = "K-O-C-M-A-R-L-I";
+const char* networkPass = "GulseviM-6709097900";
+const char* serverIP = "192.168.1.42";
 const uint16_t serverPORT = 3525;
-const char* mcuID = "MCU_UNQIUE_ID";
+String mcuID = "A1";
 unsigned long int timeOld = 0;
+String input_command = "";
+
+// There is only one Serial in ESP-01.
 #define SERIAL_COMM Serial
 #define WAIT_MS 5000
+
 SocketIOclient socketIO;
 
 typedef struct message_web_wifi {
@@ -56,29 +61,6 @@ typedef struct message_web_wifi {
 	bool mixerHeater;
 } FakeJSONforData;
 
-typedef struct message_main_wifi {
-	// Motor Speeds
-	float scalarMotor1Speed;
-	float scalarMotor2Speed;
-	float mixerMotor1Speed;
-	float extruderMotorSpeed;
-	float pullerMotor1Speed;
-	float collectorMotor1Speed;
-
-	// Motor Durations
-	long unsigned int scalingMotorsDuration;
-	long unsigned int mixerMotorsDuration;
-	long unsigned int extruderMotorsDuration;
-
-	// Temperatures
-	float mixerTemperature;
-	float extruderTemperature;
-
-	// Filament Specifications
-	double filamentDiameter;
-	float filamentLength;
-} Main2WIFIMCUsMessage_t;
-
 
 /*  Function Declerations */
 void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length);
@@ -91,12 +73,12 @@ void setup() {
 
 	// Connection to the WiFi Network:
 	WiFi.begin(ssID, networkPass);
-	SERIAL_COMM.printf("\nCompfilex searching your WiFi and will try to connect it! Please wait.\n");
+	SERIAL_COMM.printf("\n[CMPFLX-WIFI] Compfilex searching your WiFi and will try to connect it. Please wait.\n");
 	while (WiFi.status() != WL_CONNECTED) {
 		delay(500);
 		SERIAL_COMM.print("*");
 	}
-	SERIAL_COMM.printf("\nConnected to %s.\n", ssID);
+	SERIAL_COMM.printf("\n[CMPFLX-WIFI] Connected to %s.\n", ssID);
 
 	/*
 	* Socket.io Connection to NodeJS Server:
@@ -105,7 +87,7 @@ void setup() {
 	* is the function to process coming events from
 	* server.
 	*/
-	socketIO.setExtraHeaders("conntype: MCU-esp01");
+	socketIO.setExtraHeaders(("conntype: MCU-esp01\nmcuid: " + mcuID).c_str());
 	socketIO.begin(serverIP, serverPORT, "/socket.io/?EIO=4");
 	socketIO.onEvent(socketIOEventHandler);
 }
@@ -117,7 +99,7 @@ void loop() {
 		timeOld = millis();
 
 		// Stay here for debugging purposes.
-		FakeJSONforData random_data = {
+		/* FakeJSONforData random_data = {
 			.mcu_id = "A1",
 			.mixerTemperature1 = float(random(150)) + float(random(100)/100.00),
 			.mixerTemperature2 = float(random(150)) + float(random(100)/100.00),
@@ -138,43 +120,45 @@ void loop() {
 			.mixerHeater = false
 		};
 
-		send_server(&socketIO, random_data);
+		send_server(&socketIO, random_data); */
 	}
 }
+
 
 void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	switch (type) {
         case sIOtype_DISCONNECT:
-            SERIAL_COMM.printf("[IOc] Disconnected!\n");
+            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] Disconnected!\n");
             break;
 
         case sIOtype_CONNECT:
-            SERIAL_COMM.printf("[IOc] Connected to url: %s\n", payload);
+            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] Connected to url: %s\n", payload);
             socketIO.send(sIOtype_CONNECT, "/");
             break;
 
         case sIOtype_EVENT:
 			// Call the servant.
+			SERIAL_COMM.println((char*) payload);
 			serve(type, payload, length);
             break;
 
         case sIOtype_ACK:
-            SERIAL_COMM.printf("[IOc] get ack: %u\n", length);
+            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get ack: %u\n", length);
             hexdump(payload, length);
             break;
 
         case sIOtype_ERROR:
-            SERIAL_COMM.printf("[IOc] get error: %u\n", length);
+            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get error: %u\n", length);
             hexdump(payload, length);
             break;
 
         case sIOtype_BINARY_EVENT:
-            SERIAL_COMM.printf("[IOc] get binary: %u\n", length);
+            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get binary: %u\n", length);
             hexdump(payload, length);
             break;
 
         case sIOtype_BINARY_ACK:
-            SERIAL_COMM.printf("[IOc] get binary ack: %u\n", length);
+            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get binary ack: %u\n", length);
             hexdump(payload, length);
             break;
     }
@@ -224,7 +208,7 @@ void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	// The payload is a char-array, which contains JSON. Turn it to StaticJSONDocument.
 	DeserializationError error = deserializeJson(document, (char*) payload);
 	if (error) {
-		SERIAL_COMM.print(F("[ERROR] deserializeJson() failed: "));
+		SERIAL_COMM.print(F("[CMPFLX-WIFI] deserializeJson() failed: "));
 		SERIAL_COMM.println(error.f_str());
 		return;
 	}
@@ -239,47 +223,23 @@ void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	*/
 	if (event_name == "settings_update") {
 		JsonObject JSONobj = document[1];
-		
-		Main2WIFIMCUsMessage_t* coming_data = new Main2WIFIMCUsMessage_t;
+		JSONobj["dataType"] = event_name;
 
-		coming_data->scalarMotor1Speed = JSONobj["scalarMotor1Speed"];
-		coming_data->scalarMotor2Speed = JSONobj["scalarMotor2Speed"];
-		coming_data->mixerMotor1Speed = JSONobj["mixerMotor1Speed"];
-		coming_data->extruderMotorSpeed = JSONobj["extruderMotorSpeed"];
-		coming_data->pullerMotor1Speed = JSONobj["pullerMotor1Speed"];
-		coming_data->collectorMotor1Speed = JSONobj["collectorMotor1Speed"];
-		coming_data->scalingMotorsDuration = JSONobj["scalingMotorsDuration"];
-		coming_data->mixerMotorsDuration = JSONobj["mixerMotorsDuration"];
-		coming_data->extruderMotorsDuration = JSONobj["extruderMotorsDuration"];
-		coming_data->mixerTemperature = JSONobj["mixerTemperature"];
-		coming_data->extruderTemperature = JSONobj["extruderTemperature"];
-		coming_data->filamentDiameter = JSONobj["filamentDiameter"];
-		coming_data->filamentLength = JSONobj["filamentLength"];
+		String msg_to_send;
+		serializeJson(JSONobj, msg_to_send);
+		msg_to_send = "!" + msg_to_send;
 		
-		// Stay here for debugging purposes.
-		SERIAL_COMM.println(coming_data->scalarMotor1Speed);
-		SERIAL_COMM.println(coming_data->scalarMotor2Speed);
-		SERIAL_COMM.println(coming_data->mixerMotor1Speed);
-		SERIAL_COMM.println(coming_data->extruderMotorSpeed);
-		SERIAL_COMM.println(coming_data->pullerMotor1Speed);
-		SERIAL_COMM.println(coming_data->collectorMotor1Speed);
-		SERIAL_COMM.println(coming_data->scalingMotorsDuration);
-		SERIAL_COMM.println(coming_data->mixerMotorsDuration);
-		SERIAL_COMM.println(coming_data->extruderMotorsDuration);
-		SERIAL_COMM.println(coming_data->mixerTemperature);
-		SERIAL_COMM.println(coming_data->extruderTemperature);
-		SERIAL_COMM.println(coming_data->filamentDiameter);
-		SERIAL_COMM.println(coming_data->filamentLength);
+		SERIAL_COMM.println(msg_to_send);
 	} 
 
 	else if (event_name == "panic-halt-down") {
 		// NOT IMPLEMENTED!
-		SERIAL_COMM.println("SHUT DOWN!");
+		SERIAL_COMM.println("[CMPFLX-WIFI] Shut-down!");
 	}
 
 	else {
 		// Unrecognized events goes here.
-		SERIAL_COMM.println("[IOc] Unrecognized event:");
+		SERIAL_COMM.println("[CMPFLX-WIFI] [IOc] Unrecognized event:");
 		SERIAL_COMM.print(event_name);
 	}
 }

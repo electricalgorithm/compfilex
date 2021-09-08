@@ -111,3 +111,9 @@ All the model we have been designed is added to repository. However, it is not m
 ![Model Unmeasured Design 1](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/machine-model-1.png)
 
 Also, basic scheme of electrical connections are given.
+
+---
+
+### Changelog
+
+- 9 Sep. 2021: Communication between WIFI MCU and main MCU is functional, now. Also, Every MCU sends its own ID as a header, after that, server divide them to the rooms. Within this feature,  we can communicate between sockets from web and sockets from MCUs.

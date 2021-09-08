@@ -26,6 +26,61 @@ var send_reload_data = async (socket, io) => {
     });
 }
 
+
+var send_data_to_mcu = async (socket, io) => {
+    var currentSettingFromUser = {
+        status: false,
+        scalarMotor1Speed: 0,
+        scalarMotor2Speed: 0,
+        mixerMotor1Speed: 0,
+        extruderMotorSpeed: 0,
+        pullerMotor1Speed: 0,
+        collectorMotor1Speed: 0,
+        scalingMotorsDuration: 0,
+        mixerMotorsDuration: 0,
+        extruderMotorsDuration: 0,
+        mixerTemperature: 0,
+        extruderTemperature: 0,
+        filamentDiameter: 0,
+        filamentLength: 0
+    };
+
+    var userMCUid = "";
+
+    // Send current data to MCU.
+    await userScheme.findOne({
+        userName: socket.request.session.username
+    })
+    .then(doc => {
+        if (doc._id != undefined) {
+            currentSettingFromUser.status = doc.currentSetting.status;
+            userMCUid = doc.mcuID;
+            
+            currentSettingFromUser.scalarMotor1Speed = doc.currentSetting.scalarMotor1Speed;
+            currentSettingFromUser.scalarMotor2Speed = doc.currentSetting.scalarMotor2Speed;
+            currentSettingFromUser.mixerMotor1Speed = doc.currentSetting.mixerMotor1Speed;
+            currentSettingFromUser.extruderMotorSpeed = doc.currentSetting.extruderMotorSpeed;
+            currentSettingFromUser.pullerMotor1Speed = doc.currentSetting.pullerMotor1Speed;
+            currentSettingFromUser.collectorMotor1Speed = doc.currentSetting.collectorMotor1Speed;
+
+            currentSettingFromUser.scalingMotorsDuration = doc.currentSetting.scalarRunDuration.split(":")[0] * 60 + doc.currentSetting.scalarRunDuration.split(":")[1];
+            currentSettingFromUser.mixerMotorsDuration = doc.currentSetting.mixerRunDuration.split(":")[0] * 60 + doc.currentSetting.mixerRunDuration.split(":")[1];
+            currentSettingFromUser.extruderMotorsDuration = doc.currentSetting.extruderRunDuration.split(":")[0] * 60 + doc.currentSetting.extruderRunDuration.split(":")[1];
+            
+            currentSettingFromUser.mixerTemperature = doc.currentSetting.mixerTemperature;
+            currentSettingFromUser.extruderTemperature = doc.currentSetting.mixerTemperature;
+            
+            currentSettingFromUser.filamentDiameter = doc.currentSetting.filamentDiameter;
+            currentSettingFromUser.filamentLength = doc.currentSetting.filamentLength;
+        }
+    })
+    .catch(error => {
+        console.error(`${new Date().toString()} -> ERROR: ${error}`);
+    })
+
+    io.to(userMCUid).emit("settings_update", currentSettingFromUser);
+}
+
 var socketHandler = async (socket, io) => {
 
     // Web-Client Side Socket Handling
@@ -64,6 +119,7 @@ var socketHandler = async (socket, io) => {
 
                         // After saving, send new data to client.
                         send_reload_data(socket, io);
+                        send_data_to_mcu(socket, io);
                     }
                 })
                 .catch(error => {
@@ -168,8 +224,13 @@ var socketHandler = async (socket, io) => {
 
     // MCU Side Socket Handling
     // ------------------------
-    } else if (socket.request.headers.conntype.includes("MCU")) {
-        console.log(`${new Date().toString()} -> MCU_SOCKET_START (${socket.id})`)
+    } else if (socket.request.headers["conntype"].includes("MCU")) {
+        console.log(`${new Date().toString()} -> MCU_SOCKET_START (${socket.id})`);
+
+        socket.join(socket.request.headers["mcuid"]);
+        console.log(`${new Date().toString()} -> MCU_SOCKET_ASSIGN ${socket.id} in ${socket.request.headers["mcuid"]}`);
+
+        console.log(await socket.rooms);
     
         socket.on("send_data", async (object) => {
             if (object.mcuID != undefined) {
@@ -226,7 +287,7 @@ var socketHandler = async (socket, io) => {
                             "extruderMotorsDuration": 35000,
                             "mixerTemperature": 27,
                             "extruderTemperature": 150,
-                            "filamentDiameter": 1.2865,
+                            "filamentDiameter": 2.20,
                             "filamentLength": 500
                         })
                         
