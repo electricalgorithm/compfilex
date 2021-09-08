@@ -26,11 +26,11 @@
 
 
 /*  Global Variables and Configs  */
-const char* ssID = "K-O-C-M-A-R-L-I";
-const char* networkPass = "GulseviM-6709097900";
-const char* serverIP = "192.168.1.42";
+const char* ssID = "SSID_HERE";
+const char* networkPass = "NETWORK_PASS";
+const char* serverIP = "WEBSERVER_IP";
 const uint16_t serverPORT = 3525;
-String mcuID = "A1";
+String mcuID = "MCU_ID_HERE";
 unsigned long int timeOld = 0;
 String input_command = "";
 
