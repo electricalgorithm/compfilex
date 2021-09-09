@@ -124,4 +124,30 @@ router.get("/change-password", isAuth, (req, res) => {
     })
 })
 
+router.get("/unique-code", async (req, res) => {
+    let mcuID = "";
+    
+    await userScheme.findOne({
+        userName: req.session.username
+    })
+    .then(async (doc) => {
+        if (doc._id != undefined) {
+            mcuID = doc.mcuID;
+        }
+    })
+    .catch(error => {
+        console.error(`${new Date().toString()} -> ERROR: ${error}`);
+    })
+
+    res.render("mcu-unique-code", {
+        site_name: config.SITE_NAME,
+        site_description: config.SITE_DESCRPTION,
+        page_name: "Microcontroller Unique Code",
+        user_name: req.session.username,
+        req_auth: req.session.isAuth,
+        current_year: (new Date()).getFullYear(),
+        mcu_id_text: mcuID
+    })
+})
+
 module.exports = router

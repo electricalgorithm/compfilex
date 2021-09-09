@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<%- include("./partials/head.ejs") %>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+
+                <% if (req_auth) { %>
+                    <%- include("./partials/nav.loggedin.ejs") %>
+                <% } else { %>
+                    <%- include("./partials/nav.notlogged.ejs") %>
+                <% } %>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-9 col-lg-12 col-xl-10" style="width: 897px;">
+                        <div class="card shadow-lg o-hidden border-0 my-5">
+                            <div class="card-body p-0">
+                                <div class="row">
+                                    <div class="col-lg-6 align-self-center m-auto">
+                                        <div class="p-5">
+                                            <div class="text-center">
+                                                <h4 class="text-dark mb-4"><%=page_name%></h4>
+                                            </div>
+                                            <form class="user">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-4 col-sm-3 col-md-2 col-lg-4 col-xl-4 col-xxl-4 text-center align-self-end">
+                                                            <p>MCU ID:</p>
+                                                        </div>
+                                                        <div class="col-8 col-sm-9 col-md-10 col-lg-8 col-xl-8 col-xxl-8 font-monospace">
+                                                            <input  class="bg-white border rounded-0 form-control visible form-control-user" 
+                                                                    data-bs-toggle="tooltip" 
+                                                                    data-bss-tooltip="" 
+                                                                    data-bs-placement="right" 
+                                                                    id="mcuIDTextBox" 
+                                                                    aria-describedby="textboxHelp" 
+                                                                    name="mcuID" 
+                                                                    autocomplete="off" 
+                                                                    value="<%=mcu_id_text%>"
+                                                                    disabled="" 
+                                                                    eadonly="" 
+                                                                    title="This is your account's mcuID. You can communicate server with your Compfilex using this unique code.">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3"></div>
+                                                <p>This ID is user-specific 15 character length word. Do not share it for your protection.</p>
+                                                <div class="mb-3"></div>
+                                                <!--
+                                                <button class="btn btn-primary active d-block btn-user w-100" onclick="copyID()" id="copyButton">Copy it, thank you!</button>
+                                                -->
+                                                <a class="btn btn-link active text-center d-block btn-user w-100" role="button" href="/dashboard">Return to the Dashboard</a>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include("./partials/footer_1.ejs") %>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/Material-Text-Input.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+
+<script>
+    function copyID() {
+        var object = document.getElementById("mcuIDTextBox");
+
+        /* Select the text field */
+        object.select();
+        object.setSelectionRange(0, 99999);
+
+        /* Copy the text inside the text field */
+        let ans = document.execCommand('copy');
+        if (ans) document.getElementById("copyButton").innerHTML = "Coppied!"
+    }
+</script>
+
+</html>

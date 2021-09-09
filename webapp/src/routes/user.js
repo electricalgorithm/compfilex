@@ -1,9 +1,10 @@
 const crypto = require('crypto');
-const express = require("express")
-const userScheme = require("../models/user.model")
-const path = require("path")
+const nanoid = require('nanoid');
+const express = require("express");
+const userScheme = require("../models/user.model");
+const path = require("path");
 const config = require("../config.env.js");
-let router = express.Router()
+let router = express.Router();
 
 // Secret salt-key for hash function.
 const sKey = config.USER_HASH_SALT
@@ -68,26 +69,27 @@ router.post("/user", async (req, res) => {
         }
 
         // Hash the password and save it to object.
-        postedData.passwordHash = crypto.createHmac("sha256", sKey).update(postedData.passwordHash).digest("hex")
+        postedData.passwordHash = crypto.createHmac("sha256", sKey).update(postedData.passwordHash).digest("hex");
+        postedData.mcuID = nanoid.nanoid(15);
 
         // Create a new entry from userScheme modal.
-        let entry = new userScheme(postedData)
+        let entry = new userScheme(postedData);
         entry.save()
             // After saving completed, send a "OK" message with status 201.
             .then(doc => {
                 if (!doc || doc.length === 0) {
-                    return res.status(500).send(doc)
+                    return res.status(500).send(doc);
                 }
                 
                 res.setHeader("Content-Type", "application/json");
                 res.setHeader("Access-Control-Allow-Origin", "*");
                 res.status(201).send({
                     "status": "OK"
-                })
+                });
             })
             // If an error occurs, send error message as JSON with status 500.
             .catch(err => {
-                res.status(500).json(err)
+                res.status(500).json(err);
             })
     }
 
@@ -96,7 +98,7 @@ router.post("/user", async (req, res) => {
         // If not, return status 500.
         if (req.body.userName == undefined ||
             req.body.passwordHash == undefined) {
-                return res.status(500).send("Wrong username or password.")
+                return res.status(500).send("Wrong username or password.");
         }
         
         // Create a new object from request body.
