@@ -1,7 +1,7 @@
 /*
  * == COMPFILEX MCU on Arduino ==
  * software: WIFIMCU firmware
- * ver: 0.0.6 (MAIL, MAIL, DEAR!)
+ * ver: 0.0.9 (weirdo_comm!)
  * repo: https://github.com/electricalgorithm/compfilex
  * contributors: Gökhan Koçmarlı (@electricalgorithm)
  * 
@@ -23,73 +23,69 @@
 #include <WebSocketsClient.h>
 #include <SocketIOclient.h>
 #include <ArduinoJson.h>
+#include <SoftwareSerial.h>
 
 
 /*  Global Variables and Configs  */
-const char* ssID = "SSID_HERE";
-const char* networkPass = "NETWORK_PASS";
-const char* serverIP = "WEBSERVER_IP";
-const uint16_t serverPORT = 3525;
-String mcuID = "MCU_ID_HERE";
-unsigned long int timeOld = 0;
-String input_command = "";
+typedef struct network_data_struct {
+	char mcuID[16]; // 15 + \0
+	char ssid[100];
+	char pass[100];
+	char serverAddress[100];
+	uint16_t serverPort;
+} NetworkDetails_t;
 
-// There is only one Serial in ESP-01.
-#define SERIAL_COMM Serial
+unsigned long int timeOld = 0;
+uint8_t* incomingMessage = NULL;
+uint8_t incomingMessageType = 0;
+bool is_msg_processed = false;
+bool is_disconnected = false;
+
+
+void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length);
+void serve(socketIOmessageType_t type, uint8_t* payload, size_t length);
+void checkRecevingSensorDataAndSend();
+bool createNetworkDetails();
+void connectWIFI();
+void connectSocketIO();
+void SoftwareSerialEvent();
+
+SoftwareSerial SUART(4, 5);
+SocketIOclient socketIO;
+NetworkDetails_t Connection {
+	"MCU_ID_HERE",
+	"WIFI_SSID_HERE",
+	"WIFI_PASS_HERE",
+	"SERVER_ADDR_HERE",
+	3525
+};
+
+// There is only one HardwareSerial in ESP-12
+#define SERIAL_PC Serial
+#define SERIAL_MAINMCU SUART
 #define WAIT_MS 5000
 
-SocketIOclient socketIO;
-
-typedef struct message_web_wifi {
-	String mcu_id;
-	float mixerTemperature1;
-	float mixerTemperature2;
-	float extruderTemperature1;
-	float extruderTemperature2;
-	float radiusMeterActive1;
-	float radiusMeterActive2;
-	float pullerMotor1Speed;
-	float collectorMotor1Speed;
-	float scalarMotor1Speed;
-	float scalarMotor2Speed;
-	float mixerMotor1Speed;
-	float extruderMotorSpeed;
-	uint16_t pullerCycleCount;
-	uint16_t collectorCycleCount;
-	bool extruderHeater1;
-	bool extruderHeater2;
-	bool mixerHeater;
-} FakeJSONforData;
-
-
-/*  Function Declerations */
-void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length);
-void send_server(SocketIOclient* socketio_object, FakeJSONforData datum);
-void serve(socketIOmessageType_t type, uint8_t* payload, size_t length);
-
-
 void setup() {
-	SERIAL_COMM.begin(115200);
+	// Set 0's to the Connection struct.
+	// memset(&Connection, 0, sizeof(Connection));
+
+	// Send opening message to PC.
+	SERIAL_PC.begin(115200);
+	SERIAL_PC.println("[CMPFLX-WIFI] Serial communication between PC and WIFIMCU has started.");
+
+	// Start serial communication with MAINMCU.
+	SERIAL_MAINMCU.begin(115200);
+	SERIAL_PC.println("[CMPFLX-WIFI] Serial communication between WIFIMCU and MAINMCU has started.");
+
+	/* TODO: Function does not work what I expected. Will correct it in future. */
+	// Wait and check if network details updated from MAINMCU.
+	// createNetworkDetails();
 
 	// Connection to the WiFi Network:
-	WiFi.begin(ssID, networkPass);
-	SERIAL_COMM.printf("\n[CMPFLX-WIFI] Compfilex searching your WiFi and will try to connect it. Please wait.\n");
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(500);
-		SERIAL_COMM.print("*");
-	}
-	SERIAL_COMM.printf("\n[CMPFLX-WIFI] Connected to %s.\n", ssID);
+	connectWIFI();
 
-	/*
-	* Socket.io Connection to NodeJS Server:
-	* "conntype" header is important for the server
-	* to handle data correctly. socketIOEventHandler()
-	* is the function to process coming events from
-	* server.
-	*/
-	socketIO.setExtraHeaders(("conntype: MCU-esp01\nmcuid: " + mcuID).c_str());
-	socketIO.begin(serverIP, serverPORT, "/socket.io/?EIO=4");
-	socketIO.onEvent(socketIOEventHandler);
+	// Connection to the Socket.io Server.
+	connectSocketIO();
 }
 
 void loop() {
@@ -98,108 +94,66 @@ void loop() {
 	if (millis() > timeOld + WAIT_MS) {
 		timeOld = millis();
 
-		// Stay here for debugging purposes.
-		/* FakeJSONforData random_data = {
-			.mcu_id = "A1",
-			.mixerTemperature1 = float(random(150)) + float(random(100)/100.00),
-			.mixerTemperature2 = float(random(150)) + float(random(100)/100.00),
-			.extruderTemperature1 = float(random(150)) + float(random(100)/100.00),
-			.extruderTemperature2 = float(random(150)) + float(random(100)/100.00),
-			.radiusMeterActive1 = float(random(2)) + float(random(100)/100.00),
-			.radiusMeterActive2 = float(random(2)) + float(random(100)/100.00),
-			.pullerMotor1Speed = float(random(500)) + float(random(100)/100.00),
-			.collectorMotor1Speed = float(random(500)) + float(random(100)/100.00),
-			.scalarMotor1Speed = float(random(500)) + float(random(100)/100.00),
-			.scalarMotor2Speed = float(random(500)) + float(random(100)/100.00),
-			.mixerMotor1Speed = float(random(500)) + float(random(100)/100.00),
-			.extruderMotorSpeed = float(random(500)) + float(random(100)/100.00),
-			.pullerCycleCount = random(1024),
-			.collectorCycleCount = random(1024),
-			.extruderHeater1 = false,
-			.extruderHeater2 = true,
-			.mixerHeater = false
-		};
 
-		send_server(&socketIO, random_data); */
+		checkRecevingSensorDataAndSend();
+	}
+
+  SoftwareSerialEvent();
+}
+
+/*
+ * SOCKET.IO NETWORKING FUNCTIONS BETWEEN WEBSERVER AND ESP01
+ *
+ * socketIOEventHandler() -> Handles the receiving messages from sockets.
+ * send_server() -> Sends the sensor and machine active data to web server.
+ * serve() -> Process receiving data and send it to the MAIN MCU.
+ * 
+ */
+void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length) {
+	switch (type) {
+		case sIOtype_DISCONNECT:
+			if (is_disconnected) {
+				break;
+			} else {
+				SERIAL_PC.printf("[CMPFLX-WIFI][IOc] Disconnected!\n");
+				is_disconnected = true;
+			}
+			break;
+
+		case sIOtype_CONNECT:
+			SERIAL_PC.printf("[CMPFLX-WIFI][IOc] Connected to url: %s\n", payload);
+			is_disconnected = false;
+			socketIO.send(sIOtype_CONNECT, "/");
+			break;
+
+		case sIOtype_EVENT:
+			// Call the servant.
+			SERIAL_PC.println((char*) payload);
+			serve(type, payload, length);
+			break;
+			
+		case sIOtype_ACK:
+			SERIAL_PC.printf("[CMPFLX-WIFI][IOc] get ack: %u\n", length);
+			hexdump(payload, length);
+			break;
+
+		case sIOtype_ERROR:
+			SERIAL_PC.printf("[CMPFLX-WIFI][IOc] get error: %u\n", length);
+			hexdump(payload, length);
+			break;
+
+		case sIOtype_BINARY_EVENT:
+			SERIAL_PC.printf("[CMPFLX-WIFI][IOc] get binary: %u\n", length);
+			hexdump(payload, length);
+			break;
+
+		case sIOtype_BINARY_ACK:
+			SERIAL_PC.printf("[CMPFLX-WIFI][IOc] get binary ack: %u\n", length);
+			hexdump(payload, length);
+			break;
 	}
 }
 
-
-void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length) {
-	switch (type) {
-        case sIOtype_DISCONNECT:
-            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] Disconnected!\n");
-            break;
-
-        case sIOtype_CONNECT:
-            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] Connected to url: %s\n", payload);
-            socketIO.send(sIOtype_CONNECT, "/");
-            break;
-
-        case sIOtype_EVENT:
-			// Call the servant.
-			SERIAL_COMM.println((char*) payload);
-			serve(type, payload, length);
-            break;
-
-        case sIOtype_ACK:
-            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get ack: %u\n", length);
-            hexdump(payload, length);
-            break;
-
-        case sIOtype_ERROR:
-            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get error: %u\n", length);
-            hexdump(payload, length);
-            break;
-
-        case sIOtype_BINARY_EVENT:
-            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get binary: %u\n", length);
-            hexdump(payload, length);
-            break;
-
-        case sIOtype_BINARY_ACK:
-            SERIAL_COMM.printf("[CMPFLX-WIFI][IOc] get binary ack: %u\n", length);
-            hexdump(payload, length);
-            break;
-    }
-}
-
-
-void send_server(SocketIOclient* socketio_object, FakeJSONforData datum) {
-	String msg_to_send;
-	StaticJsonDocument<384> json_document;
-
-	// Add event name to the document.
-	json_document.add("send_data");
-
-	// Add JSON object to the document.
-	JsonObject json_object = json_document.createNestedObject();
-	json_object["mcuID"] = datum.mcu_id;
-	json_object["mixerTemperature1"] = datum.mixerTemperature1;
-	json_object["mixerTemperature2"] = datum.mixerTemperature2;
-	json_object["extruderTemperature1"] = datum.extruderTemperature1;
-	json_object["extruderTemperature2"] = datum.extruderTemperature2;
-	json_object["radiusMeterActive1"] = datum.radiusMeterActive1;
-	json_object["radiusMeterActive2"] = datum.radiusMeterActive2;
-	json_object["pullerMotor1Speed"] = datum.pullerMotor1Speed;
-	json_object["collectorMotor1Speed"] = datum.collectorMotor1Speed;
-	json_object["scalarMotor1Speed"] = datum.scalarMotor1Speed;
-	json_object["scalarMotor2Speed"] = datum.scalarMotor2Speed;
-	json_object["mixerMotor1Speed"] = datum.mixerMotor1Speed;
-	json_object["extruderMotorSpeed"] = datum.extruderMotorSpeed;
-	json_object["pullerCycleCount"] = datum.pullerCycleCount;
-	json_object["collectorCycleCount"] = datum.collectorCycleCount;
-	json_object["extruderHeater1"] = datum.extruderHeater1;
-	json_object["extruderHeater2"] = datum.extruderHeater2;
-	json_object["mixerHeater"] = datum.mixerHeater;
-
-	// Convert the JSON document to String.
-	serializeJson(json_document, msg_to_send);
-
-	// Send the message to the server.
-	socketio_object->sendEVENT(msg_to_send);
-
-}
 
 void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	// Create a StaticJSONDocument.
@@ -208,8 +162,8 @@ void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	// The payload is a char-array, which contains JSON. Turn it to StaticJSONDocument.
 	DeserializationError error = deserializeJson(document, (char*) payload);
 	if (error) {
-		SERIAL_COMM.print(F("[CMPFLX-WIFI] deserializeJson() failed: "));
-		SERIAL_COMM.println(error.f_str());
+		SERIAL_PC.print(F("[CMPFLX-WIFI] deserializeJson() failed: "));
+		SERIAL_PC.println(error.f_str());
 		return;
 	}
 
@@ -229,17 +183,251 @@ void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 		serializeJson(JSONobj, msg_to_send);
 		msg_to_send = "!" + msg_to_send;
 		
-		SERIAL_COMM.println(msg_to_send);
+		SERIAL_MAINMCU.println(msg_to_send);
 	} 
 
 	else if (event_name == "panic-halt-down") {
 		// NOT IMPLEMENTED!
-		SERIAL_COMM.println("[CMPFLX-WIFI] Shut-down!");
+		SERIAL_PC.println("[CMPFLX-WIFI] Shut-down!");
 	}
 
 	else {
 		// Unrecognized events goes here.
-		SERIAL_COMM.println("[CMPFLX-WIFI] [IOc] Unrecognized event:");
-		SERIAL_COMM.print(event_name);
+		SERIAL_PC.println("[CMPFLX-WIFI] [IOc] Unrecognized event:");
+		SERIAL_PC.print(event_name);
 	}
 }
+
+/*
+ * COMMUNICATION PROTOCOL IMPLEMENTATION BETWEEN MAIN MCU AND ESP01.
+ */
+
+typedef struct __attribute__((packed)) sensor_data_struct {
+	uint8_t dataType;
+	uint8_t status;
+	float mixerTemperature1;
+	float mixerTemperature2;
+	float extruderTemperature1;
+	float extruderTemperature2;
+	double radiusMeterActive1;
+	double radiusMeterActive2;
+	uint16_t scalarMotor1Speed;
+	uint16_t scalarMotor2Speed;
+	uint16_t mixerMotor1Speed;
+	uint16_t extruderMotorSpeed;
+	uint16_t pullerMotor1Speed;
+	uint16_t collectorMotor1Speed;
+	uint16_t pullerCycleCount;
+	uint16_t collectorCycleCount;
+	uint8_t heaters;
+	uint32_t remainingMixerDuration;
+	uint32_t remainingScalarDuration;
+	uint32_t remainingExtruderDuration;
+} SensorData;
+
+
+void SoftwareSerialEvent() {
+	if (is_msg_processed) {
+		delete incomingMessage;
+		incomingMessage = NULL;
+		incomingMessageType = 0;
+		is_msg_processed = false;
+	}
+
+	if (SERIAL_MAINMCU.available() > 0 && SERIAL_MAINMCU.read() == '<') {
+		switch(SERIAL_MAINMCU.read()) {
+
+			// DATA: NETWORK DETAILS
+			case 1: {
+				SERIAL_PC.println("SoftwareSerialEvent() '1' captured.");
+				incomingMessageType = 1;
+				incomingMessage = new uint8_t[sizeof(NetworkDetails_t)];
+				memset(incomingMessage, 0, sizeof(NetworkDetails_t));
+
+				for (uint16_t index = 0; index < sizeof(NetworkDetails_t); index++) {
+					uint8_t receving_char = SERIAL_MAINMCU.read();
+					if (receving_char == '>') break;
+					incomingMessage[index] = receving_char;
+				}
+
+				SERIAL_PC.printf("SoftwareSerialEvent() %s captured.\n", incomingMessage);
+		
+				break;
+			}
+
+			// DATA: SENSOR VALUES
+			case 2: {
+				SERIAL_PC.println("SoftwareSerialEvent() SensorData captured.");
+				incomingMessageType = 2;
+				incomingMessage = new uint8_t[sizeof(SensorData)];
+				memset(incomingMessage, 0, sizeof(SensorData));
+
+				for (uint16_t index = 0; index < sizeof(SensorData); index++) {
+					uint8_t receving_char = SERIAL_MAINMCU.read();
+					if (receving_char == '>') break;
+					incomingMessage[index] = receving_char;
+				}
+
+				break;
+			}
+
+			default:
+				break;
+
+		}
+	}
+}
+
+void checkRecevingSensorDataAndSend() {
+	SERIAL_PC.printf("incomingMessageType: %d, incomingMessage: %d\n", incomingMessageType, sizeof(incomingMessage));
+	
+	if (incomingMessageType == 2 && incomingMessage != NULL) {
+		String messageToSend;
+		SensorData new_data;
+		memcpy(&new_data, incomingMessage, sizeof(new_data));
+		is_msg_processed = 1;
+
+    	SERIAL_PC.printf("$ mcuID: %s,\n|status: %c,\n|mixerTemperature1: %.02f,\n|mixerTemperature2: %.02f,\n|extruderTemperature1: %.02f,\n|extruderTemperature2: %.02f,\n|radiusMeterActive1: %0.2f,\n|radiusMeterActive2: %.02f,\n|pullerMotor1Speed: %d,\n|collectorMotor1Speed: %d,\n|scalarMotor1Speed: %d,\n|scalarMotor2Speed: %d,\n|mixerMotor1Speed: %d,\n|extruderMotorSpeed: %d,\n|pullerCycleCount: %d,\n|collectorCycleCount: %d,\n", 
+						Connection.mcuID,
+						new_data.status,
+						new_data.mixerTemperature1,
+						new_data.mixerTemperature2,
+						new_data.extruderTemperature1,
+						new_data.extruderTemperature2,
+						new_data.radiusMeterActive1,
+						new_data.radiusMeterActive2,
+						new_data.pullerMotor1Speed,
+						new_data.collectorMotor1Speed,
+						new_data.scalarMotor1Speed,
+						new_data.scalarMotor2Speed,
+						new_data.mixerMotor1Speed,
+						new_data.extruderMotorSpeed,
+						new_data.pullerCycleCount,
+						new_data.collectorCycleCount
+		);
+		
+		
+		StaticJsonDocument<512> json_document;
+
+		// Add event name to the document.
+		json_document.add("sensor_data");
+
+		// Add JSON object to the document.
+		JsonObject json_object = json_document.createNestedObject();
+
+		json_object["mcuID"] = Connection.mcuID;
+		json_object["status"] = new_data.status;
+		json_object["mixerTemperature1"] = new_data.mixerTemperature1;
+		json_object["mixerTemperature2"] = new_data.mixerTemperature2;
+		json_object["extruderTemperature1"] = new_data.extruderTemperature1;
+		json_object["extruderTemperature2"] = new_data.extruderTemperature2;
+		json_object["radiusMeterActive1"] = new_data.radiusMeterActive1;
+		json_object["radiusMeterActive2"] = new_data.radiusMeterActive2;
+		json_object["pullerMotor1Speed"] = new_data.pullerMotor1Speed;
+		json_object["collectorMotor1Speed"] = new_data.collectorMotor1Speed;
+		json_object["scalarMotor1Speed"] = new_data.scalarMotor1Speed;
+		json_object["scalarMotor2Speed"] = new_data.scalarMotor2Speed;
+		json_object["mixerMotor1Speed"] = new_data.mixerMotor1Speed;
+		json_object["extruderMotorSpeed"] = new_data.extruderMotorSpeed;
+		json_object["pullerCycleCount"] = new_data.pullerCycleCount;
+		json_object["collectorCycleCount"] = new_data.collectorCycleCount;
+		
+
+		bool mixerHeater1 = bitRead(new_data.heaters, 0);
+		bool extruderHeater1 = bitRead(new_data.heaters, 2);
+		bool extruderHeater2 = bitRead(new_data.heaters, 4);
+
+		json_object["extruderHeater1"] = extruderHeater1;
+		json_object["extruderHeater2"] = extruderHeater2;
+		json_object["mixerHeater"] = mixerHeater1;
+
+		// Convert the JSON document to String.
+		serializeJson(json_document, messageToSend);
+
+    SERIAL_PC.println(messageToSend);
+
+		// Send the message to the server.
+		socketIO.sendEVENT(messageToSend);
+		
+	}
+}
+
+bool createNetworkDetails() {
+	if (incomingMessage != NULL && incomingMessageType != 0) {
+		delete incomingMessage;
+		incomingMessage = NULL;
+		incomingMessageType = 0;
+
+	}
+
+	if (SERIAL_MAINMCU.available() > 0) {
+		char deneme = SERIAL_MAINMCU.read();
+		SERIAL_PC.printf("createNetworkDetails() '%c' captured.\n", deneme);
+		
+		if (deneme == '<') {
+		char recv_2 = SERIAL_MAINMCU.read();
+		SERIAL_PC.printf("SERIAL_COMM.read() -> recv_2: %c\n", recv_2);
+		
+		if (recv_2 == '1') {
+			SERIAL_PC.println("createNetworkDetails() '1' captured.");
+			incomingMessageType = 1;
+			incomingMessage = new uint8_t[sizeof(NetworkDetails_t)];
+			memset(incomingMessage, 0, sizeof(NetworkDetails_t));
+
+			for (uint16_t index = 0; index < sizeof(NetworkDetails_t); index++) {
+				uint8_t receving_char = SERIAL_MAINMCU.read();
+				if (receving_char == '>') break;
+				incomingMessage[index] = receving_char;
+			}
+
+			SERIAL_PC.printf("createNetworkDetails() %s captured.\n", incomingMessage);
+		}
+		}
+	}
+
+	if (Connection.mcuID[0] != 0xFF && 
+		Connection.serverAddress[0] != 0xFF &&
+		Connection.serverPort != 0 &&
+		Connection.ssid[0] != 0xFF &&
+		Connection.pass[0] != 0xFF) {
+			
+			memcpy(&Connection, incomingMessage, sizeof(Connection));
+			
+			SERIAL_PC.printf("[CMPFLX-WIFI] Network details are captured from the MAINMCU and setted.");
+			return true;
+	} else {
+
+		return false;
+	}
+}
+
+void connectWIFI() {
+	WiFi.begin(Connection.ssid, Connection.pass);
+	SERIAL_PC.printf("\n[CMPFLX-WIFI] Compfilex searching your WiFi and will try to connect it. Please wait.\n");
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(500);
+		SERIAL_PC.print("*");
+	}
+	SERIAL_PC.printf("\n[CMPFLX-WIFI] Connected to %s.\n", Connection.ssid);
+}
+
+/*
+* Socket.io Connection to NodeJS Server:
+* "conntype" header is important for the server
+* to handle data correctly. socketIOEventHandler()
+* is the function to process coming events from
+* server.
+*/
+void connectSocketIO() {
+	// Concat header_front and MCUID in Connection struct.
+	const char* header_front = "conntype: MCU-esp01\nmcuid: ";
+	char* extra_headers = (char*) malloc(strlen(header_front) + strlen(Connection.mcuID));
+	strcpy(extra_headers, header_front);
+	strcat(extra_headers, Connection.mcuID);
+
+	// Connect to the Socket.io server.
+	socketIO.setExtraHeaders(extra_headers);
+	socketIO.begin(Connection.serverAddress, Connection.serverPort, "/socket.io/?EIO=4");
+	socketIO.onEvent(socketIOEventHandler);
+}
+
