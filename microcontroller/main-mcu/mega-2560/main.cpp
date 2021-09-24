@@ -1,7 +1,7 @@
 /*
  * == COMPFILEX MCU on Arduino ==
  * software: MAINMCU firmware
- * ver: 0.0.6 (weirdo_comm)
+ * ver: 0.0.91 (two-way-struct-%%)
  * repo: https://github.com/electricalgorithm/compfilex
  * contributors: Gökhan Koçmarlı (@electricalgorithm)
  * 
@@ -21,8 +21,8 @@
 #include "machine_functions.hpp"
 
 #define SERIAL_WIFIMCU	Serial1
-#define SERIAL_PC	Serial
-#define JSONOBJ_MEM	512
+#define SERIAL_PC		Serial
+#define JSONOBJ_MEM		512
 
 // Variables are decleared and initilized in "machine_functions.cpp".
 extern MachineSettings_t* MachineSettings;
@@ -47,12 +47,19 @@ unsigned long old_time = 0;
 const uint8_t MESSAGE_START = '<';
 const uint8_t MESSAGE_END = '>';
 char recieved_char = '\0';
+char dbg_r_c = '\0';
+uint8_t dbg_r_8 = 0;
+
+uint8_t* incomingMessage = NULL;
+uint8_t incomingMessageType = 0;
+bool is_msg_processed = false;
 
 // Function Declerations
-bool networkMsgHandler();
+void networkMsgHandler();
 void sendNetworkDetails();
 void sendAllSensorData();
 void sendCurrentSettings();
+void serialEventPC();
 
 void setup() {
 	// For PC-MEGA communcation.
@@ -71,43 +78,89 @@ void setup() {
 }
 
 void loop() {
-	if (millis() - old_time > 2500) {
+	if (millis() - old_time > 500) {
 		
 		// sendNetworkDetails();
 		networkMsgHandler();
-		sendAllSensorData();
+		// sendAllSensorData();
 		
 		old_time = millis();
 	}
+
+	// serialEventPC();
 }
 
 void serialEvent1() {
-	if (SERIAL_WIFIMCU.available()) {
-		recieved_char = SERIAL_WIFIMCU.read();
+	if (is_msg_processed) {
+		delete incomingMessage;
+		incomingMessage = NULL;
+		incomingMessageType = 0;
+		is_msg_processed = false;
+	}
+
+	if (SERIAL_WIFIMCU.available() > 0) {
+		// I don't know why delay is neccecary, but without it,
+		// function doesn't catch all the UART messages.
+		delay(10);
 		
-		switch (recieved_char) {
-			case '!':
-				s1_input_command = SERIAL_WIFIMCU.readStringUntil('\n');
-				SERIAL_PC.print("[CMPLFX] Message received:  ");
-				SERIAL_PC.println(s1_input_command);	
-				break;
-			
-			default:
-				break;
+		if (SERIAL_WIFIMCU.read() == '<') {
+			switch (SERIAL_WIFIMCU.read()) {
+				
+				case 3: {
+					incomingMessageType = 3;
+					incomingMessage = new uint8_t[sizeof(MachineSettings_t)];
+					memset(incomingMessage, 0, sizeof(MachineSettings_t));
+
+					for (uint16_t index = 0; index < sizeof(MachineSettings_t); index++) {
+						uint8_t receving_char = SERIAL_WIFIMCU.read();
+						if (receving_char == '>') break;
+						incomingMessage[index] = receving_char;
+					}
+
+					break;
+				}
+
+				default:
+					break;
+
+			}
 		}
 	}
 }
 
-void serialEvent() {
+void serialEventPC() {
 	// A debug command general type: $send_sensor#
-	if (SERIAL_PC.available() && SERIAL_PC.read() == '$') {
-		String debug_command = SERIAL_PC.readStringUntil('#');
+
+	dbg_r_8 = SERIAL_PC.available();
+
+	SERIAL_PC.print("[CMPFLX-DEBUG] available() return value: ");
+	SERIAL_PC.println(dbg_r_8);
+
+	if (dbg_r_8 < 1) return;
+	
+	SERIAL_PC.println("[CMPFLX-DEBUG] available() passed.");
+	
+	dbg_r_c = SERIAL_PC.read();
+
+	SERIAL_PC.print("[CMPFLX-DEBUG] read() return value: ");
+	SERIAL_PC.println(dbg_r_c);
+
+	if (dbg_r_c == '$') {
+		SERIAL_PC.println("[CMPFLX-DEBUG] $ character was read.");
+		
+		debug_command = SERIAL_PC.readStringUntil('#');
+
+		SERIAL_PC.print("[CMPFLX-DEBUG] The command has been read: ");
+		SERIAL_PC.println(debug_command);
 
 		if (debug_command == "send_sensor") {
 			sendAllSensorData();
+			SERIAL_PC.println("[CMPFLX-DEBUG] send_sensor is triggered.");
 		}
 		
 		else {
+
+			SERIAL_PC.println("[CMPFLX-DEBUG] else is triggered.");
 			return;
 		}
 	}
@@ -122,58 +175,32 @@ void serialEvent() {
  * 	- @returns false:				an error occured
  *  - @returns true:				OK, nothings wrong
  */
-bool networkMsgHandler() {
+void networkMsgHandler() {
 	// If any message is not receieved, return false.
-	if (s1_input_command.length() <= 0) return false;
+	if (is_msg_processed) return;
 
-	StaticJsonDocument<JSONOBJ_MEM> document;
+	if (incomingMessageType == 3 && incomingMessage != NULL) {
+		MachineSettings_t settings;
+		memcpy(&settings, incomingMessage, sizeof(settings));
+		is_msg_processed = true;
 
-	// Deserializing the JSON string to object, if error occurs exit the function.
-	DeserializationError error = deserializeJson(document, s1_input_command);
-	if (error) {
-		SERIAL_PC.print("[CMPLFX] Deserialization of JSON is failed: ");
-		SERIAL_PC.println(error.c_str());
-		
-		s1_input_command = "";
-		return false;
-	}
-
-	// Clear and open the communcation.
-	s1_input_command = "";
-	
-	// Before doing anything, close machine if wanted.
-	if (document["status"] == 0) {
-		stop_machine();
-	}
-	
-	if (document["dataType"] == "settings_update") {
-		MachineSettings->scalarMotor1Speed = document["scalarMotor1Speed"];
-		MachineSettings->scalarMotor2Speed = document["scalarMotor2Speed"];
-		MachineSettings->mixerMotor1Speed = document["mixerMotor1Speed"];
-		MachineSettings->extruderMotorSpeed = document["extruderMotorSpeed"];
-		MachineSettings->pullerMotor1Speed = document["pullerMotor1Speed"];
-		MachineSettings->collectorMotor1Speed = document["collectorMotor1Speed"];
-		MachineSettings->scalingMotorsDuration = document["scalingMotorsDuration"];
-		MachineSettings->mixerMotorsDuration = document["mixerMotorsDuration"];
-		MachineSettings->extruderMotorsDuration = document["extruderMotorsDuration"];
-		MachineSettings->mixerTemperature = document["mixerTemperature"];
-		MachineSettings->extruderTemperature = document["extruderTemperature"];
-		MachineSettings->filamentDiameter = document["filamentDiameter"];
-		MachineSettings->filamentLength = document["filamentLength"];
+		MachineSettings->status = settings.status;
+		MachineSettings->scalarMotor1Speed = settings.scalarMotor1Speed;
+		MachineSettings->scalarMotor2Speed = settings.scalarMotor2Speed;
+		MachineSettings->mixerMotor1Speed = settings.mixerMotor1Speed;
+		MachineSettings->extruderMotorSpeed = settings.extruderMotorSpeed;
+		MachineSettings->pullerMotor1Speed = settings.pullerMotor1Speed;
+		MachineSettings->collectorMotor1Speed = settings.collectorMotor1Speed;
+		MachineSettings->scalingMotorsDuration = settings.scalingMotorsDuration;
+		MachineSettings->mixerMotorsDuration = settings.mixerMotorsDuration;
+		MachineSettings->extruderMotorsDuration = settings.extruderMotorsDuration;
+		MachineSettings->mixerTemperature = settings.mixerTemperature;
+		MachineSettings->extruderTemperature = settings.extruderTemperature;
+		MachineSettings->filamentDiameter = settings.filamentDiameter;
+		MachineSettings->filamentLength = settings.filamentLength;
 
 		update_machine();
 	}
-	
-	else {
-		String dataType = document["dataType"];
-		String data = document["data"];
-		SERIAL_PC.print("[CMPLFX] dataType: ");
-		SERIAL_PC.println(dataType);
-		SERIAL_PC.print("[CMPLFX] data: ");
-		SERIAL_PC.println(data);
-	}
-
-	return true;
 }
 
 void sendNetworkDetails() {

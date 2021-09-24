@@ -8,12 +8,12 @@ typedef struct sMachineSettings {
 	uint8_t status;
 
 	// Motor Speeds
-	float scalarMotor1Speed;
-	float scalarMotor2Speed;
-	float mixerMotor1Speed;
-	float extruderMotorSpeed;
-	float pullerMotor1Speed;
-	float collectorMotor1Speed;
+	uint16_t scalarMotor1Speed;
+	uint16_t scalarMotor2Speed;
+	uint16_t mixerMotor1Speed;
+	uint16_t extruderMotorSpeed;
+	uint16_t pullerMotor1Speed;
+	uint16_t collectorMotor1Speed;
 
 	// Motor Durations
 	long unsigned int scalingMotorsDuration;
@@ -88,4 +88,3 @@ typedef struct network_data_struct {
 } NetworkDetails_t;
 
 #endif
-

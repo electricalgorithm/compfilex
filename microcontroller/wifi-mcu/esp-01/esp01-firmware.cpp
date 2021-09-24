@@ -1,7 +1,7 @@
 /*
  * == COMPFILEX MCU on Arduino ==
  * software: WIFIMCU firmware
- * ver: 0.0.9 (weirdo_comm!)
+ * ver: 0.0.91 (two-way-struct-%%)
  * repo: https://github.com/electricalgorithm/compfilex
  * contributors: Gökhan Koçmarlı (@electricalgorithm)
  * 
@@ -41,9 +41,12 @@ uint8_t incomingMessageType = 0;
 bool is_msg_processed = false;
 bool is_disconnected = false;
 
+const uint8_t MESSAGE_START = '<';
+const uint8_t MESSAGE_END = '>';
+
 
 void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t length);
-void serve(socketIOmessageType_t type, uint8_t* payload, size_t length);
+void serveForTheServer(socketIOmessageType_t type, uint8_t* payload, size_t length);
 void checkRecevingSensorDataAndSend();
 bool createNetworkDetails();
 void connectWIFI();
@@ -128,8 +131,7 @@ void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t l
 
 		case sIOtype_EVENT:
 			// Call the servant.
-			SERIAL_PC.println((char*) payload);
-			serve(type, payload, length);
+			serveForTheServer(type, payload, length);
 			break;
 			
 		case sIOtype_ACK:
@@ -154,8 +156,34 @@ void socketIOEventHandler(socketIOmessageType_t type, uint8_t* payload, size_t l
 	}
 }
 
+typedef struct __attribute__((packed)) recieve_message_struct {
+	// 0 = STOP, 1 = START
+	uint8_t status;
 
-void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
+	// Motor Speeds
+	uint16_t scalarMotor1Speed;
+	uint16_t scalarMotor2Speed;
+	uint16_t mixerMotor1Speed;
+	uint16_t extruderMotorSpeed;
+	uint16_t pullerMotor1Speed;
+	uint16_t collectorMotor1Speed;
+	
+	// Motor Durations
+	long unsigned int scalingMotorsDuration;
+	long unsigned int mixerMotorsDuration;
+	long unsigned int extruderMotorsDuration;
+	
+	// Temperatures
+	float mixerTemperature;
+	float extruderTemperature;
+	
+	// Filament Specifications
+	double filamentDiameter;
+	float filamentLength;
+
+} MachineSettings_t;
+
+void serveForTheServer(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	// Create a StaticJSONDocument.
 	StaticJsonDocument<768> document;
 
@@ -176,14 +204,30 @@ void serve(socketIOmessageType_t type, uint8_t* payload, size_t length) {
 	* "panic-halt-down" will be used for sudden shuting down the machine.
 	*/
 	if (event_name == "settings_update") {
-		JsonObject JSONobj = document[1];
-		JSONobj["dataType"] = event_name;
-
-		String msg_to_send;
-		serializeJson(JSONobj, msg_to_send);
-		msg_to_send = "!" + msg_to_send;
 		
-		SERIAL_MAINMCU.println(msg_to_send);
+		JsonObject JSONobj = document[1];
+		MachineSettings_t new_data {
+			.status = JSONobj["status"],
+			.scalarMotor1Speed = JSONobj["scalarMotor1Speed"],
+			.scalarMotor2Speed = JSONobj["scalarMotor2Speed"],
+			.mixerMotor1Speed = JSONobj["mixerMotor1Speed"],
+			.extruderMotorSpeed = JSONobj["extruderMotorSpeed"],
+			.pullerMotor1Speed = JSONobj["pullerMotor1Speed"],
+			.collectorMotor1Speed = JSONobj["collectorMotor1Speed"],
+			.scalingMotorsDuration = JSONobj["scalingMotorsDuration"],
+			.mixerMotorsDuration = JSONobj["mixerMotorsDuration"],
+			.extruderMotorsDuration = JSONobj["extruderMotorsDuration"],
+			.mixerTemperature = JSONobj["mixerTemperature"],
+			.extruderTemperature = JSONobj["extruderTemperature"],
+			.filamentDiameter = JSONobj["filamentDiameter"],
+			.filamentLength = JSONobj["filamentLength"]
+		};
+		
+		const char message_code = 3;
+		SERIAL_MAINMCU.write((const uint8_t*) &MESSAGE_START, sizeof(MESSAGE_START));
+		SERIAL_MAINMCU.write((const uint8_t*) &message_code, sizeof(uint8_t));
+		SERIAL_MAINMCU.write((uint8_t*) &new_data, sizeof(MachineSettings_t));
+		SERIAL_MAINMCU.write((const uint8_t*) &MESSAGE_END, sizeof(MESSAGE_END));
 	} 
 
 	else if (event_name == "panic-halt-down") {
@@ -223,7 +267,7 @@ typedef struct __attribute__((packed)) sensor_data_struct {
 	uint32_t remainingMixerDuration;
 	uint32_t remainingScalarDuration;
 	uint32_t remainingExtruderDuration;
-} SensorData;
+} SensorData_t;
 
 
 void SoftwareSerialEvent() {
@@ -259,10 +303,10 @@ void SoftwareSerialEvent() {
 			case 2: {
 				SERIAL_PC.println("SoftwareSerialEvent() SensorData captured.");
 				incomingMessageType = 2;
-				incomingMessage = new uint8_t[sizeof(SensorData)];
-				memset(incomingMessage, 0, sizeof(SensorData));
+				incomingMessage = new uint8_t[sizeof(SensorData_t)];
+				memset(incomingMessage, 0, sizeof(SensorData_t));
 
-				for (uint16_t index = 0; index < sizeof(SensorData); index++) {
+				for (uint16_t index = 0; index < sizeof(SensorData_t); index++) {
 					uint8_t receving_char = SERIAL_MAINMCU.read();
 					if (receving_char == '>') break;
 					incomingMessage[index] = receving_char;
@@ -279,13 +323,11 @@ void SoftwareSerialEvent() {
 }
 
 void checkRecevingSensorDataAndSend() {
-	SERIAL_PC.printf("incomingMessageType: %d, incomingMessage: %d\n", incomingMessageType, sizeof(incomingMessage));
-	
 	if (incomingMessageType == 2 && incomingMessage != NULL) {
 		String messageToSend;
-		SensorData new_data;
+		SensorData_t new_data;
 		memcpy(&new_data, incomingMessage, sizeof(new_data));
-		is_msg_processed = 1;
+		is_msg_processed = true;
 
     	SERIAL_PC.printf("$ mcuID: %s,\n|status: %c,\n|mixerTemperature1: %.02f,\n|mixerTemperature2: %.02f,\n|extruderTemperature1: %.02f,\n|extruderTemperature2: %.02f,\n|radiusMeterActive1: %0.2f,\n|radiusMeterActive2: %.02f,\n|pullerMotor1Speed: %d,\n|collectorMotor1Speed: %d,\n|scalarMotor1Speed: %d,\n|scalarMotor2Speed: %d,\n|mixerMotor1Speed: %d,\n|extruderMotorSpeed: %d,\n|pullerCycleCount: %d,\n|collectorCycleCount: %d,\n", 
 						Connection.mcuID,
@@ -343,8 +385,6 @@ void checkRecevingSensorDataAndSend() {
 
 		// Convert the JSON document to String.
 		serializeJson(json_document, messageToSend);
-
-    SERIAL_PC.println(messageToSend);
 
 		// Send the message to the server.
 		socketIO.sendEVENT(messageToSend);
@@ -430,4 +470,3 @@ void connectSocketIO() {
 	socketIO.begin(Connection.serverAddress, Connection.serverPort, "/socket.io/?EIO=4");
 	socketIO.onEvent(socketIOEventHandler);
 }
-

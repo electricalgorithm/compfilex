@@ -2,7 +2,7 @@
 #define MACHINE_FUNCTIONS
 
 #include <Arduino.h>
-#include <machine_structs.h>
+#include <machine_structs.hpp>
 
 #define SERIAL_PC  Serial
 
@@ -58,4 +58,3 @@ uint8_t get_heater_status();
 uint32_t get_remaining_duration(uint8_t);
 
 #endif
-

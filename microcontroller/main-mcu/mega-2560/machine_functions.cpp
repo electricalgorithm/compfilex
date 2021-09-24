@@ -15,8 +15,8 @@ void stop_machine() {
 void update_machine() {
 	// NOT IMPLEMENTED
 
-	SERIAL_PC.print("[CMPLFX] Machine settings updated. ");
-	SERIAL_PC.println(MachineSettings->filamentDiameter);
+	SERIAL_PC.print("[CMPLFX] Machine settings updated. extruderMotorSpeed: ");
+	SERIAL_PC.println(MachineSettings->extruderMotorSpeed);
 	
 	// NOT IMPLEMENTED
 }

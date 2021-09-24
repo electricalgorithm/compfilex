@@ -23,15 +23,26 @@ Server is the brain of the system. It is a middle-man in communication, a bridge
 ##### Features
 
 - [x] Changeable site name and description.
+
 - [x] Multi-user and multi-machine support. (Note: works with one machine per user now)
+
 - [x] Client-side rendering with [Socket.io](https://socket.io/). It enable us to change data dynamically.
+
 - [x] Server-side rendering with [Embedded Javascript (EJS)](https://ejs.co/).
+
 - [ ] RESTful API for future application development. (Working on it as a side project, not fully implemented.)
+
 - [x] Socket.io API implementation for both client-side and MCU side.
+
 - [x] Machine settings change on client-side web panel. (Changing options can be improved for user experience.)
+
 - [x] Active (changing) data rendering immediately after a data comes from MCU.
+
 - [x] "Saved Settings" page (or database) per user, to save their current settings, and perform them again later.
-- [ ] A page must be created to show users their MCU Unique ID.
+
+- [x] A page must be created to show users their MCU Unique ID.
+
+- [ ] Start and Stop button must be implemented. They both send setting details to the MCU.
 
   
 
@@ -87,7 +98,7 @@ Main microcontroller will be Arduino Mega in the project. To establish the conne
 - [x] Server connection with using [Socket.io](https://socket.io/) (a special kind of WebSocket) protocol and [Links2004's arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets) library.
 - [x] Data sending/receiving from ESP-01 to NodeJS server.
 - [x] Data sending/receiving from NodeJS to ESP-01.
-- [ ] Data sending protocol creation, and implementing between *Arduino Mega* (main MCU) and *ESP-01* (WIFI MCU).
+- [x] Data sending protocol creation, and implementing between *Arduino Mega* (main MCU) and *ESP-01* (WIFI MCU).
 - [ ] Run-time configurable *WIFI SSID*, *WIFI password*, *server address*, *server port*, and *MCU unique ID*.
 - [ ] GPIO Handling on Arduino Mega side.
   - [ ] Temperatures' data
@@ -111,9 +122,3 @@ All the model we have been designed is added to repository. However, it is not m
 ![Model Unmeasured Design 1](https://raw.githubusercontent.com/electricalgorithm/compfilex/main/assets/machine-model-1.png)
 
 Also, basic scheme of electrical connections are given.
-
----
-
-### Changelog
-
-- 9 Sep. 2021: Communication between WIFI MCU and main MCU is functional, now. Also, Every MCU sends its own ID as a header, after that, server divide them to the rooms. Within this feature,  we can communicate between sockets from web and sockets from MCUs.
