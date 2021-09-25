@@ -42,7 +42,7 @@ Server is the brain of the system. It is a middle-man in communication, a bridge
 
 - [x] A page must be created to show users their MCU Unique ID.
 
-- [ ] Start and Stop button must be implemented. They both send setting details to the MCU.
+- [x] Start and Stop button must be implemented. They both send setting details to the MCU.
 
   
 
