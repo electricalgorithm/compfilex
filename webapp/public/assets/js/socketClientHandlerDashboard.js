@@ -6,6 +6,7 @@ const socket = io("/", {
 
 // Functions
 function reloadSettings(object) {
+    document.querySelector("#machineStatusText").innerHTML = object.currentSetting.status ? "On":"Off";
     document.querySelector("#scalingRatioText").innerHTML = object.currentSetting.scalingRatio;
     document.querySelector("#filamentDiameterText").innerHTML = object.currentSetting.filamentDiameter;
     document.querySelector("#filamentLengthText").innerHTML = object.currentSetting.filamentLength;
@@ -87,7 +88,11 @@ var start_stop = (bool) => {
 
 // saveSettings function add current settings into savedSettings section of the user's database entry.
 var saveSetting = () => {
-    socket.emit("save_current_setting", {
+    if (document.querySelector("#machineStatusText").innerHTML == 'On') _status = true;
+    else _status = false;
+
+    socket.emit("save_current_setting", {    
+        status: Boolean(_status),
         scalingRatio: document.querySelector("#scalingRatioText").innerHTML,
         filamentDiameter: Number(document.querySelector("#filamentDiameterText").innerHTML),
         filamentLength: Number(document.querySelector("#filamentLengthText").innerHTML),
@@ -100,7 +105,8 @@ var saveSetting = () => {
         extruderMotorSpeed: Number(document.querySelector("#extruderMotorSpeedText").innerHTML),
         extruderRunDuration: document.querySelector("#extruderMotorDurationText").innerHTML,
         extruderTemperature: Number(document.querySelector("#extruderTemperatureText").innerHTML),
-        collectorMotor1Speed: Number(document.querySelector("#collectorMotor1SpeedText").innerHTML)
+        collectorMotor1Speed: Number(document.querySelector("#collectorMotor1SpeedText").innerHTML),
+        pullerMotor1Speed: Number(document.querySelector("#pullerMotor1SpeedText").innerHTML)
     })
 }
 

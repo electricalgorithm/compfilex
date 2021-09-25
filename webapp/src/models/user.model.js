@@ -193,6 +193,11 @@ let user = new mongoose.Schema({
         collectorMotor1Speed: {
             type: Number,
             required: true
+        },
+
+        pullerMotor1Speed: {
+            type: Number,
+            required: true
         }
     }],
 

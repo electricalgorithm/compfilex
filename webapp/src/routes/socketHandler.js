@@ -153,6 +153,7 @@ var socketHandler = async (socket, io) => {
         })
 
         socket.on("save_current_setting", async (object) => {
+            console.log(object);
             if (object.length != 0) {
                 // Search for the username in the database.
                 await userScheme.findOne({
@@ -161,7 +162,10 @@ var socketHandler = async (socket, io) => {
                 .then(async (doc) => {
                     if (doc._id != undefined) {
                         var fromDatabase = doc.currentSetting;
-
+                        delete fromDatabase.status;
+                        
+                        console.log(fromDatabase);
+                        console.log(JSON.stringify(object) == JSON.stringify(fromDatabase));
                         // If the one client send us is the same with the entry in database,
                         // save it to the savedSettings object in that user's entry.
                         if (JSON.stringify(object) == JSON.stringify(fromDatabase)) {
@@ -192,11 +196,13 @@ var socketHandler = async (socket, io) => {
             })
             .then(async (doc) => {
                 if (doc._id != undefined) {
-                    
-                    // Change current settings to the saved setting.
-                    doc.currentSetting = doc.savedSettings.find((obj) => {
+                    chosenSettingFromDatabase = doc.savedSettings.find((obj) => {
                         return obj.saveNumber == settingNo;
                     });
+                    
+                    // Change current settings to the saved setting.
+                    doc.currentSetting = chosenSettingFromDatabase;
+                    doc.currentSetting.status = false;
                     await doc.save();
                     
                     // Log the change action to server.
