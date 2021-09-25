@@ -1,7 +1,7 @@
 /*
  * == COMPFILEX MCU on Arduino ==
  * software: MAINMCU firmware
- * ver: 0.0.91 (two-way-struct-%%)
+ * ver: 0.0.92 (its-to-hot-here)
  * repo: https://github.com/electricalgorithm/compfilex
  * contributors: Gökhan Koçmarlı (@electricalgorithm)
  * 
@@ -78,11 +78,11 @@ void setup() {
 }
 
 void loop() {
-	if (millis() - old_time > 500) {
+	if (millis() - old_time > 3000) {
 		
 		// sendNetworkDetails();
 		networkMsgHandler();
-		// sendAllSensorData();
+		sendAllSensorData();
 		
 		old_time = millis();
 	}
@@ -184,6 +184,12 @@ void networkMsgHandler() {
 		memcpy(&settings, incomingMessage, sizeof(settings));
 		is_msg_processed = true;
 
+		// Machine checks its status before all, because of panic situations.
+		// The operator may need to be fast to stop machine.
+		if (settings.status == false) {
+			stop_machine();
+		}
+
 		MachineSettings->status = settings.status;
 		MachineSettings->scalarMotor1Speed = settings.scalarMotor1Speed;
 		MachineSettings->scalarMotor2Speed = settings.scalarMotor2Speed;
@@ -218,10 +224,10 @@ void sendAllSensorData() {
 	SensorData new_data {
 		.dataType = 1,
 		.status = get_machine_status(),
-		.mixerTemperature1 = get_temperature(0, 1),
-		.mixerTemperature2 = get_temperature(0, 2),
-		.extruderTemperature1 = get_temperature(1, 1),
-		.extruderTemperature2 = get_temperature(1, 2),
+		.mixerTemperature1 = get_temperature(0, 0),
+		.mixerTemperature2 = get_temperature(0, 1),
+		.extruderTemperature1 = get_temperature(1, 0),
+		.extruderTemperature2 = get_temperature(1, 1),
 		.radiusMeterActive1 = get_current_radius(1),
 		.radiusMeterActive2 = get_current_radius(2),
 		.scalarMotor1Speed = get_motor_speed(0, 1),

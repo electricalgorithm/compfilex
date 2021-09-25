@@ -7,17 +7,17 @@
 #define SERIAL_PC  Serial
 
 void stop_machine();
+void start_machine();
 void update_machine();
 bool get_machine_status();
 
-/*
- * get_temperature(uint8_t, uint8_t):
- * Parameters:
- *  1. (0) for mixer system, (1) for extruder system.
- *  2. (1) for first sensor, (2) for second sensor.
- * Returns: float
+/*!
+ *  @name get_temperature
+ *  @param system_no (0) for mixer system, (1) for extruder system.
+ *  @param device_no (1) for first sensor, (2) for second sensor.
+ *  @returns Temperature as Celcius degree or NaN.
  */
-float get_temperature(uint8_t, uint8_t);
+float get_temperature(uint8_t system_no, uint8_t device_no);
 /*
  * get_current_radius(uint8_t):
  * Parameters:

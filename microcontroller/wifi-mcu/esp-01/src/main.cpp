@@ -1,7 +1,7 @@
 /*
  * == COMPFILEX MCU on Arduino ==
  * software: WIFIMCU firmware
- * ver: 0.0.91 (two-way-struct-%%)
+ * ver: 0.0.92 (its-to-hot-here)
  * repo: https://github.com/electricalgorithm/compfilex
  * contributors: Gökhan Koçmarlı (@electricalgorithm)
  * 
@@ -40,6 +40,7 @@ uint8_t* incomingMessage = NULL;
 uint8_t incomingMessageType = 0;
 bool is_msg_processed = false;
 bool is_disconnected = false;
+uint8_t receving_char = '\0';
 
 const uint8_t MESSAGE_START = '<';
 const uint8_t MESSAGE_END = '>';
@@ -283,31 +284,27 @@ void SoftwareSerialEvent() {
 
 			// DATA: NETWORK DETAILS
 			case 1: {
-				SERIAL_PC.println("SoftwareSerialEvent() '1' captured.");
 				incomingMessageType = 1;
 				incomingMessage = new uint8_t[sizeof(NetworkDetails_t)];
 				memset(incomingMessage, 0, sizeof(NetworkDetails_t));
 
 				for (uint16_t index = 0; index < sizeof(NetworkDetails_t); index++) {
-					uint8_t receving_char = SERIAL_MAINMCU.read();
+					receving_char = SERIAL_MAINMCU.read();
 					if (receving_char == '>') break;
 					incomingMessage[index] = receving_char;
 				}
-
-				SERIAL_PC.printf("SoftwareSerialEvent() %s captured.\n", incomingMessage);
 		
 				break;
 			}
 
 			// DATA: SENSOR VALUES
 			case 2: {
-				SERIAL_PC.println("SoftwareSerialEvent() SensorData captured.");
 				incomingMessageType = 2;
 				incomingMessage = new uint8_t[sizeof(SensorData_t)];
 				memset(incomingMessage, 0, sizeof(SensorData_t));
 
 				for (uint16_t index = 0; index < sizeof(SensorData_t); index++) {
-					uint8_t receving_char = SERIAL_MAINMCU.read();
+					receving_char = SERIAL_MAINMCU.read();
 					if (receving_char == '>') break;
 					incomingMessage[index] = receving_char;
 				}
@@ -329,7 +326,8 @@ void checkRecevingSensorDataAndSend() {
 		memcpy(&new_data, incomingMessage, sizeof(new_data));
 		is_msg_processed = true;
 
-    	SERIAL_PC.printf("$ mcuID: %s,\n|status: %c,\n|mixerTemperature1: %.02f,\n|mixerTemperature2: %.02f,\n|extruderTemperature1: %.02f,\n|extruderTemperature2: %.02f,\n|radiusMeterActive1: %0.2f,\n|radiusMeterActive2: %.02f,\n|pullerMotor1Speed: %d,\n|collectorMotor1Speed: %d,\n|scalarMotor1Speed: %d,\n|scalarMotor2Speed: %d,\n|mixerMotor1Speed: %d,\n|extruderMotorSpeed: %d,\n|pullerCycleCount: %d,\n|collectorCycleCount: %d,\n", 
+    	/*
+		 SERIAL_PC.printf("$ mcuID: %s,\n|status: %c,\n|mixerTemperature1: %.02f,\n|mixerTemperature2: %.02f,\n|extruderTemperature1: %.02f,\n|extruderTemperature2: %.02f,\n|radiusMeterActive1: %0.2f,\n|radiusMeterActive2: %.02f,\n|pullerMotor1Speed: %d,\n|collectorMotor1Speed: %d,\n|scalarMotor1Speed: %d,\n|scalarMotor2Speed: %d,\n|mixerMotor1Speed: %d,\n|extruderMotorSpeed: %d,\n|pullerCycleCount: %d,\n|collectorCycleCount: %d,\n", 
 						Connection.mcuID,
 						new_data.status,
 						new_data.mixerTemperature1,
@@ -347,6 +345,7 @@ void checkRecevingSensorDataAndSend() {
 						new_data.pullerCycleCount,
 						new_data.collectorCycleCount
 		);
+		*/
 		
 		
 		StaticJsonDocument<512> json_document;
@@ -388,6 +387,9 @@ void checkRecevingSensorDataAndSend() {
 
 		// Send the message to the server.
 		socketIO.sendEVENT(messageToSend);
+
+		// Returning message to the debug screen.
+		SERIAL_PC.println("[CMPFLX-WIFI] Sensor data has been uploaded to the server.");
 		
 	}
 }

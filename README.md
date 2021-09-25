@@ -86,12 +86,13 @@ module.exports = config;
 
 * Control Panel Early Showcase (23.08.2021): https://www.youtube.com/watch?v=-NbN3ADiRs4
 * Communication between MCU and Server, with Client-Side Rendering (04.09.2021): https://www.youtube.com/watch?v=0adJoKZSHKA
+* Two-way Communication and Web Panel System Showcase (Saved Settings Page error fixed.)
 
 
 
 ## Embedded System Design
 
-Main microcontroller will be Arduino Mega in the project. To establish the connection between main MCU and NodeJS server, we use ESP-01 SoC and Socket.io (WebSocket) protocol. It is not fully implemented, yet.
+Main microcontroller will be Arduino Mega in the project. To establish the connection between main MCU and NodeJS server, we use ESP-01 SoC and Socket.io (WebSocket) protocol. Main MCU is sending and receiving data to/from WIFI MCU using UART.
 
 ##### Features
 
@@ -101,7 +102,7 @@ Main microcontroller will be Arduino Mega in the project. To establish the conne
 - [x] Data sending protocol creation, and implementing between *Arduino Mega* (main MCU) and *ESP-01* (WIFI MCU).
 - [ ] Run-time configurable *WIFI SSID*, *WIFI password*, *server address*, *server port*, and *MCU unique ID*.
 - [ ] GPIO Handling on Arduino Mega side.
-  - [ ] Temperatures' data
+  - [x] Temperatures' data
   - [ ] Motors driving
   - [ ] Motors' data
   - [ ] Filament diameter system data

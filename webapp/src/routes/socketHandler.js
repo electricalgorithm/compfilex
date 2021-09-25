@@ -301,24 +301,6 @@ var socketHandler = async (socket, io) => {
                             activeData: doc.activeData
                         });
                         console.log(`${new Date().toString()} -> MCU_SOCKET_UPDATE (${object.mcuID})(${doc.userName})`)
-
-
-                        socket.emit("settings_update", {
-                            "status": 0,
-                            "scalarMotor1Speed": 125.125,
-                            "scalarMotor2Speed": 250.25,
-                            "mixerMotor1Speed": 50.50,
-                            "extruderMotorSpeed": 10,
-                            "pullerMotor1Speed": 30.15,
-                            "collectorMotor1Speed": 40,
-                            "scalingMotorsDuration": 15000,
-                            "mixerMotorsDuration": 25000,
-                            "extruderMotorsDuration": 35000,
-                            "mixerTemperature": 27,
-                            "extruderTemperature": 150,
-                            "filamentDiameter": 2.20,
-                            "filamentLength": 500
-                        })
                         
                     } else {
                         // Print an error message if mcuID isn't regoconized in database.
