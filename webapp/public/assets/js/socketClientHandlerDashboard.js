@@ -67,6 +67,24 @@ var changeSetting = () => {
     document.querySelector("#changeSettingValueInput").value = "";
 }
 
+// start_stop function change the status of the machine, it starts or stops. true -> start, false -> stop.
+var start_stop = (bool) => {
+    if (typeof(bool) != "boolean") return;
+    
+    socket.emit("start_stop", {
+        status: bool
+    });
+
+    // Showing a snackbar message.
+    var snackBar = document.querySelector("#snackbar");
+    if (bool) snackBar.innerHTML = "Machine has started.";
+    else snackBar.innerHTML = "Machine has stopped.";
+    snackBar.className = "show";
+    setTimeout(() => {
+        snackBar.className = snackBar.className.replace("show", "");
+    }, 2000)
+}
+
 // saveSettings function add current settings into savedSettings section of the user's database entry.
 var saveSetting = () => {
     socket.emit("save_current_setting", {

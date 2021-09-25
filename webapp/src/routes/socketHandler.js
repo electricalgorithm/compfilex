@@ -128,6 +128,30 @@ var socketHandler = async (socket, io) => {
             }
         })
 
+        socket.on("start_stop", async (object) => {
+            if (object.status != undefined) {
+                // Search for the username in the database.
+                await userScheme.findOne({
+                    userName: socket.request.session.username
+                })
+                .then(async (doc) => {
+                    if (doc._id != undefined) {
+                        
+                        // Change setting_name to setting_value in the database.
+                        doc.currentSetting["status"] = object.status;
+                        await doc.save();
+                        
+                        // After saving, send new data to client.
+                        send_reload_data(socket, io);
+                        send_data_to_mcu(socket, io);
+                    }
+                })
+                .catch(error => {
+                    console.error(`${new Date().toString()} -> ERROR: ${error}`);
+                })
+            }
+        })
+
         socket.on("save_current_setting", async (object) => {
             if (object.length != 0) {
                 // Search for the username in the database.
@@ -229,10 +253,8 @@ var socketHandler = async (socket, io) => {
 
         socket.join(socket.request.headers["mcuid"]);
         console.log(`${new Date().toString()} -> MCU_SOCKET_ASSIGN ${socket.id} in ${socket.request.headers["mcuid"]}`);
-
-        console.log(await socket.rooms);
     
-        socket.on("send_data", async (object) => {
+        socket.on("sensor_data", async (object) => {
             if (object.mcuID != undefined) {
                 await userScheme.findOne({
                     mcuID: object.mcuID
@@ -276,6 +298,7 @@ var socketHandler = async (socket, io) => {
 
 
                         socket.emit("settings_update", {
+                            "status": 0,
                             "scalarMotor1Speed": 125.125,
                             "scalarMotor2Speed": 250.25,
                             "mixerMotor1Speed": 50.50,
